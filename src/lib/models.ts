@@ -21,6 +21,7 @@ const TheorySectionSchema = new Schema({
 
 const QuestionSchema = new Schema({
     id: { type: String, required: true },
+    type: { type: String, default: 'multiple-choice' },
     text: { type: String, required: true },
     blanks: [{ type: String }],
     options: [{ type: String }],
@@ -66,3 +67,21 @@ UnitSchema.index({ subjectId: 1, id: 1 }, { unique: true });
 
 export const Subject: Model<any> = mongoose.models.Subject || mongoose.model('Subject', SubjectSchema);
 export const Unit: Model<any> = mongoose.models.Unit || mongoose.model('Unit', UnitSchema);
+
+const ExamSchema = new Schema({
+    id: { type: String, required: true },
+    title: { type: String, required: true },
+    description: { type: String, default: '' },
+    type: {
+        type: String,
+        enum: ['15-minute', '45-minute', 'midterm-1', 'final-1', 'midterm-2', 'final-2', 'practice'],
+        required: true
+    },
+    duration: { type: Number, required: true }, // minutes
+    questionCount: { type: Number, default: 0 },
+    subjectId: { type: String },
+    questions: [QuestionSchema], // Reusing QuestionSchema
+    isActive: { type: Boolean, default: true },
+}, { timestamps: true });
+
+export const Exam: Model<any> = mongoose.models.Exam || mongoose.model('Exam', ExamSchema);

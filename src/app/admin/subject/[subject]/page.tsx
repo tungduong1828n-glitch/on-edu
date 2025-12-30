@@ -5,9 +5,14 @@ import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { Subject, Unit } from '@/lib/types';
 import {
-    ArrowLeft, Plus, Edit2, Trash2, ChevronRight,
-    BookOpen, Save, Loader2
+    ArrowLeft, Plus, ChevronRight,
+    Save, Loader2
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface Props {
     params: Promise<{ subject: string }>;
@@ -23,8 +28,8 @@ export default function AdminSubjectPage({ params }: Props) {
         name: '',
         description: '',
         icon: 'book-open',
-        color: '#3B82F6',
-        gradient: 'from-blue-500 to-indigo-600',
+        color: '#06b6d4',
+        gradient: 'from-cyan-500 to-teal-600',
         order: 1,
         isActive: true,
     });
@@ -67,164 +72,171 @@ export default function AdminSubjectPage({ params }: Props) {
     };
 
     const gradientOptions = [
-        { value: 'from-blue-500 to-indigo-600', label: 'Xanh duong' },
-        { value: 'from-emerald-500 to-teal-600', label: 'Xanh la' },
-        { value: 'from-violet-500 to-purple-600', label: 'Tim' },
-        { value: 'from-amber-500 to-orange-600', label: 'Cam' },
-        { value: 'from-red-500 to-rose-600', label: 'Do' },
-        { value: 'from-pink-500 to-rose-600', label: 'Hong' },
+        { value: 'from-cyan-500 to-teal-600', label: 'Xanh lơ (Cyan)' },
+        { value: 'from-blue-500 to-indigo-600', label: 'Xanh dương (Blue)' },
+        { value: 'from-emerald-500 to-green-600', label: 'Xanh lá (Emerald)' },
+        { value: 'from-violet-500 to-purple-600', label: 'Tím (Violet)' },
+        { value: 'from-amber-500 to-orange-600', label: 'Cam (Amber)' },
+        { value: 'from-red-500 to-rose-600', label: 'Đỏ (Red)' },
+        { value: 'from-pink-500 to-rose-600', label: 'Hồng (Pink)' },
     ];
 
     const iconOptions = [
-        { value: 'book-open', label: 'Sach' },
-        { value: 'calculator', label: 'May tinh' },
-        { value: 'atom', label: 'Nguyen tu' },
-        { value: 'flask-conical', label: 'Ong nghiem' },
-        { value: 'languages', label: 'Ngon ngu' },
-        { value: 'landmark', label: 'Di tich' },
+        { value: 'book-open', label: 'Sách (Chung)' },
+        { value: 'languages', label: 'Ngôn ngữ' },
+        { value: 'calculator', label: 'Toán học' },
+        { value: 'atom', label: 'Vật lý' },
+        { value: 'flask-conical', label: 'Hóa học' },
+        { value: 'landmark', label: 'Lịch sử' },
     ];
 
     if (loading) {
         return (
-            <div className="max-w-4xl mx-auto px-4 py-8">
-                <div className="animate-pulse space-y-4">
-                    <div className="h-8 bg-white/10 rounded w-32"></div>
-                    <div className="glass-card p-6 h-64"></div>
-                </div>
+            <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+                <div className="h-8 w-32 bg-muted animate-pulse rounded" />
+                <div className="h-64 w-full bg-muted animate-pulse rounded-lg" />
             </div>
         );
     }
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-8">
-            <Link href="/admin" className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors">
-                <ArrowLeft className="w-4 h-4" />
-                <span>Quay lai Admin</span>
+            <Link href="/admin">
+                <Button variant="ghost" className="mb-6 pl-0 hover:pl-0 hover:bg-transparent text-muted-foreground hover:text-foreground">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Quay lại Admin
+                </Button>
             </Link>
 
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-bold">
-                    {isNew ? 'Them mon hoc moi' : `Chinh sua: ${subject.name}`}
+                <h1 className="text-3xl font-bold tracking-tight">
+                    {isNew ? 'Thêm môn học mới' : `Chỉnh sửa: ${subject.name}`}
                 </h1>
-                <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center gap-2">
-                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    Luu
-                </button>
+                <Button onClick={handleSave} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    Lưu thay đổi
+                </Button>
             </div>
 
-            <div className="glass-card p-6 mb-8">
-                <h2 className="text-lg font-semibold mb-4">Thong tin mon hoc</h2>
+            <Card className="mb-8">
+                <CardHeader>
+                    <CardTitle>Thông tin môn học</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="subject-id">ID (không dấu, không cách)</Label>
+                            <Input
+                                id="subject-id"
+                                value={subject.id}
+                                onChange={(e) => setSubject({ ...subject, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
+                                placeholder="vd: tieng-anh"
+                                disabled={!isNew}
+                            />
+                        </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label className="block text-sm text-white/60 mb-2">ID (khong dau, khong cach)</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            value={subject.id}
-                            onChange={(e) => setSubject({ ...subject, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
-                            placeholder="vi-du: english, math"
-                            disabled={!isNew}
-                        />
-                    </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="subject-name">Tên môn học</Label>
+                            <Input
+                                id="subject-name"
+                                value={subject.name}
+                                onChange={(e) => setSubject({ ...subject, name: e.target.value })}
+                                placeholder="VD: Tiếng Anh"
+                            />
+                        </div>
 
-                    <div>
-                        <label className="block text-sm text-white/60 mb-2">Ten mon hoc</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            value={subject.name}
-                            onChange={(e) => setSubject({ ...subject, name: e.target.value })}
-                            placeholder="Vi du: Tieng Anh"
-                        />
-                    </div>
+                        <div className="md:col-span-2 space-y-2">
+                            <Label htmlFor="subject-desc">Mô tả</Label>
+                            <Textarea
+                                id="subject-desc"
+                                rows={3}
+                                value={subject.description}
+                                onChange={(e) => setSubject({ ...subject, description: e.target.value })}
+                                placeholder="Mô tả ngắn về môn học"
+                            />
+                        </div>
 
-                    <div className="md:col-span-2">
-                        <label className="block text-sm text-white/60 mb-2">Mo ta</label>
-                        <textarea
-                            className="input-field resize-none"
-                            rows={3}
-                            value={subject.description}
-                            onChange={(e) => setSubject({ ...subject, description: e.target.value })}
-                            placeholder="Mo ta ngan ve mon hoc"
-                        />
-                    </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="subject-icon">Biểu tượng</Label>
+                            <select
+                                id="subject-icon"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={subject.icon}
+                                onChange={(e) => setSubject({ ...subject, icon: e.target.value })}
+                            >
+                                {iconOptions.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    <div>
-                        <label className="block text-sm text-white/60 mb-2">Icon</label>
-                        <select
-                            className="input-field"
-                            value={subject.icon}
-                            onChange={(e) => setSubject({ ...subject, icon: e.target.value })}
-                        >
-                            {iconOptions.map(opt => (
-                                <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                        </select>
-                    </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="subject-color">Màu sắc (Gradient)</Label>
+                            <select
+                                id="subject-color"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={subject.gradient}
+                                onChange={(e) => setSubject({ ...subject, gradient: e.target.value })}
+                            >
+                                {gradientOptions.map(opt => (
+                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    <div>
-                        <label className="block text-sm text-white/60 mb-2">Mau sac</label>
-                        <select
-                            className="input-field"
-                            value={subject.gradient}
-                            onChange={(e) => setSubject({ ...subject, gradient: e.target.value })}
-                        >
-                            {gradientOptions.map(opt => (
-                                <option key={opt.value} value={opt.value}>{opt.label}</option>
-                            ))}
-                        </select>
+                        <div className="space-y-2">
+                            <Label htmlFor="subject-order">Thứ tự hiển thị</Label>
+                            <Input
+                                id="subject-order"
+                                type="number"
+                                value={subject.order}
+                                onChange={(e) => setSubject({ ...subject, order: parseInt(e.target.value) || 0 })}
+                            />
+                        </div>
                     </div>
-
-                    <div>
-                        <label className="block text-sm text-white/60 mb-2">Thu tu hien thi</label>
-                        <input
-                            type="number"
-                            className="input-field"
-                            value={subject.order}
-                            onChange={(e) => setSubject({ ...subject, order: parseInt(e.target.value) || 0 })}
-                        />
-                    </div>
-                </div>
-            </div>
+                </CardContent>
+            </Card>
 
             {!isNew && (
-                <div className="glass-card p-6">
-                    <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-lg font-semibold">Danh sach bai hoc</h2>
-                        <Link href={`/admin/subject/${subjectId}/unit/new`} className="btn-secondary text-sm py-2 px-4 flex items-center gap-2">
-                            <Plus className="w-4 h-4" />
-                            Them bai
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle>Danh sách bài học</CardTitle>
+                        <Link href={`/admin/subject/${subjectId}/unit/new`}>
+                            <Button size="sm" variant="outline">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Thêm bài
+                            </Button>
                         </Link>
-                    </div>
-
-                    {units.length > 0 ? (
-                        <div className="space-y-2">
-                            {units.map((unit, idx) => (
-                                <Link key={unit.id} href={`/admin/subject/${subjectId}/unit/${unit.id}`}>
-                                    <div className="flex items-center justify-between p-4 rounded-xl hover:bg-white/5 transition-colors group">
-                                        <div className="flex items-center gap-3">
-                                            <span className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-sm font-medium">
-                                                {idx + 1}
-                                            </span>
-                                            <div>
-                                                <div className="font-medium group-hover:text-blue-400 transition-colors">{unit.title}</div>
-                                                <div className="text-sm text-white/60">
-                                                    {unit.lessons?.length || 0} bai - {unit.lessons?.reduce((acc, l) => acc + (l.exercises?.length || 0), 0) || 0} bai tap
+                    </CardHeader>
+                    <CardContent>
+                        {units.length > 0 ? (
+                            <div className="space-y-2">
+                                {units.map((unit, idx) => (
+                                    <Link key={unit.id} href={`/admin/subject/${subjectId}/unit/${unit.id}`} className="block">
+                                        <div className="flex items-center justify-between p-3 rounded-md hover:bg-muted transition-colors group border border-transparent hover:border-border">
+                                            <div className="flex items-center gap-4">
+                                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                                                    {idx + 1}
+                                                </span>
+                                                <div>
+                                                    <p className="font-medium group-hover:text-primary transition-colors">{unit.title}</p>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        {unit.lessons?.length || 0} phần - {unit.lessons?.reduce((acc, l) => acc + (l.exercises?.length || 0), 0) || 0} bài tập
+                                                    </p>
                                                 </div>
                                             </div>
+                                            <ChevronRight className="w-4 h-4 text-muted-foreground" />
                                         </div>
-                                        <ChevronRight className="w-5 h-5 text-white/40 group-hover:text-white/80 transition-colors" />
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-8 text-white/40">
-                            Chua co bai hoc nao. Click "Them bai" de tao bai hoc moi.
-                        </div>
-                    )}
-                </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-8 text-muted-foreground border-t border-dashed">
+                                Chưa có bài học nào. Click "Thêm bài" để tạo bài học mới.
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             )}
         </div>
     );

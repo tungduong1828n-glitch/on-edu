@@ -1,136 +1,94 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { Subject } from '@/lib/types';
 import {
-  BookOpen, Calculator, Atom, FlaskConical,
-  BookOpenCheck, Landmark, GraduationCap, Sparkles,
-  ArrowRight, Users, FileText, Trophy, Zap
+  BookOpen, Users, FileText, Trophy, Zap, Sparkles, GraduationCap
 } from 'lucide-react';
-
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  'book-open': BookOpen,
-  'calculator': Calculator,
-  'atom': Atom,
-  'flask-conical': FlaskConical,
-  'languages': BookOpenCheck,
-  'landmark': Landmark,
-};
-
-function SubjectCard({ subject }: { subject: Subject }) {
-  const IconComponent = iconMap[subject.icon] || BookOpen;
-
-  return (
-    <Link href={`/subject/${subject.id}`}>
-      <div className="glass-card p-6 group cursor-pointer h-full">
-        <div className="flex items-start justify-between mb-4">
-          <div
-            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${subject.gradient} flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg`}
-          >
-            <IconComponent className="w-6 h-6 text-white" />
-          </div>
-          <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-cyan-400 group-hover:translate-x-1 transition-all" />
-        </div>
-
-        <h3 className="text-lg font-semibold mb-2 group-hover:text-cyan-400 transition-colors">
-          {subject.name}
-        </h3>
-
-        <p className="text-white/50 text-sm line-clamp-2">
-          {subject.description}
-        </p>
-      </div>
-    </Link>
-  );
-}
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 export default function HomePage() {
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch('/api/subjects')
-      .then(res => res.json())
-      .then(data => {
-        setSubjects(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <section className="text-center mb-20">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-8">
-          <Sparkles className="w-4 h-4 text-cyan-400" />
-          <span className="text-sm text-cyan-400 font-medium">Ôn thi hiệu quả - Đạt điểm cao</span>
-        </div>
+    <div className="relative overflow-hidden min-h-screen">
+      {/* Background Elements */}
+      <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] rounded-full bg-cyan-500/5 blur-[120px] -z-10" />
+      <div className="absolute top-[10%] -right-[10%] w-[60%] h-[60%] rounded-full bg-blue-600/5 blur-[120px] -z-10" />
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-          <span className="gradient-text">Ôn Thi Lớp 12</span>
-          <br />
-          <span className="text-white">Dễ Dàng & Hiệu Quả</span>
-        </h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 space-y-32">
+        {/* Hero Section */}
+        <section className="text-center relative max-w-4xl mx-auto animate-in fade-in zoom-in duration-700">
+          <Badge variant="outline" className="mb-6 rounded-full border-cyan-500/20 bg-cyan-500/5 px-4 py-1.5 text-cyan-400 backdrop-blur-sm">
+            <Sparkles className="mr-2 h-3.5 w-3.5 fill-cyan-400/20" />
+            Nền tảng ôn thi trực tuyến số 1 Việt Nam
+          </Badge>
 
-        <p className="text-lg text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Nền tảng ôn tập trực tuyến với lý thuyết chi tiết, bài tập đa dạng
-          và phản hồi tức thì. Giúp bạn tự tin chinh phục kỳ thi THPT Quốc gia.
-        </p>
+          <h1 className="mb-8 text-5xl font-extrabold tracking-tight sm:text-7xl font-outfit">
+            <span className="block text-white">Chinh Phục</span>
+            <span className="block bg-gradient-to-r from-cyan-400 to-blue-600 bg-clip-text text-transparent pb-2">
+              Kỳ Thi THPT Quốc Gia
+            </span>
+          </h1>
 
-        <div className="flex flex-wrap justify-center gap-4">
-          <a href="#subjects" className="btn-primary flex items-center gap-2 text-base">
-            <GraduationCap className="w-5 h-5" />
-            Bắt đầu ôn tập
-          </a>
-          <Link href="/admin" className="btn-secondary flex items-center gap-2 text-base">
-            <Zap className="w-5 h-5" />
-            Quản lý nội dung
-          </Link>
-        </div>
-      </section>
+          <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground/80 leading-relaxed">
+            Hệ thống bài giảng, trắc nghiệm và đề thi thử được biên soạn bởi đội ngũ giáo viên giàu kinh nghiệm. Cá nhân hóa lộ trình học tập của bạn ngay hôm nay.
+          </p>
 
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-20">
-        {[
-          { icon: BookOpen, label: 'Môn học', value: '6+', desc: 'đa dạng' },
-          { icon: FileText, label: 'Bài tập', value: '500+', desc: 'câu hỏi' },
-          { icon: Users, label: 'Học sinh', value: '1000+', desc: 'tham gia' },
-          { icon: Trophy, label: 'Tỷ lệ đậu', value: '95%', desc: 'thành công' },
-        ].map((stat, idx) => (
-          <div key={idx} className="glass-card p-5 sm:p-6 text-center">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mx-auto mb-3">
-              <stat.icon className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
-            </div>
-            <div className="text-2xl sm:text-3xl font-bold mb-0.5">{stat.value}</div>
-            <div className="text-white/40 text-xs sm:text-sm">{stat.label}</div>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/dashboard">
+              <Button size="lg" className="h-14 rounded-full px-10 text-lg bg-cyan-500 hover:bg-cyan-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.4)] hover:shadow-[0_0_30px_rgba(6,182,212,0.6)] transition-all transform hover:-translate-y-1">
+                <GraduationCap className="mr-3 h-5 w-5" />
+                Bắt đầu học ngay
+              </Button>
+            </Link>
+            <Link href="/about">
+              <Button size="lg" variant="outline" className="h-14 rounded-full px-10 text-lg border-white/10 bg-white/5 hover:bg-white/10 text-white hover:text-white transition-all">
+                <Zap className="mr-2 h-5 w-5" />
+                Tìm hiểu thêm
+              </Button>
+            </Link>
           </div>
-        ))}
-      </section>
+        </section>
 
-      <section id="subjects">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold">Các môn học</h2>
-          <span className="tag tag-cyan">{subjects.length} môn</span>
-        </div>
+        {/* Stats Section with Glassmorphism */}
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {[
+            { icon: BookOpen, label: 'Môn học', value: '8+', desc: 'Đầy đủ các môn' },
+            { icon: FileText, label: 'Ngân hàng câu hỏi', value: '10k+', desc: 'Cập nhật liên tục' },
+            { icon: Users, label: 'Học sinh tin dùng', value: '5000+', desc: 'Trên cả nước' },
+            { icon: Trophy, label: 'Điểm trung bình', value: '8.5', desc: 'Thành tích cao' },
+          ].map((stat, idx) => (
+            <div key={idx} className="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02] p-6 text-center backdrop-blur-sm transition-all hover:bg-white/[0.04] animate-in fade-in slide-in-from-bottom-8 duration-700" style={{ animationDelay: `${idx * 100}ms` }}>
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-white/5 to-white/0 shadow-inner ring-1 ring-white/10 group-hover:scale-110 transition-transform">
+                <stat.icon className="h-6 w-6 text-cyan-400" />
+              </div>
+              <div className="text-3xl font-bold text-white mb-1 font-outfit">{stat.value}</div>
+              <div className="text-sm font-medium text-muted-foreground">{stat.label}</div>
+              <p className="text-xs text-muted-foreground/50 mt-1">{stat.desc}</p>
+            </div>
+          ))}
+        </section>
 
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="glass-card p-6">
-                <div className="w-12 h-12 rounded-xl skeleton mb-4"></div>
-                <div className="h-5 skeleton rounded mb-2 w-2/3"></div>
-                <div className="h-4 skeleton rounded w-full"></div>
+        {/* Feature Highlights (New Section to fill Landing Page) */}
+        <section className="py-16 border-t border-white/5">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <h2 className="text-3xl font-bold font-outfit mb-4 text-white">Tại sao chọn NckxEdu?</h2>
+            <p className="text-muted-foreground">Công nghệ hiện đại kết hợp phương pháp giáo dục tiên tiến</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { title: 'Lộ trình cá nhân hóa', desc: 'Hệ thống tự động phân tích và gợi ý bài học phù hợp với năng lực.' },
+              { title: 'Thi thử như thi thật', desc: 'Giao diện và áp lực thời gian mô phỏng chính xác kỳ thi THPT QG.' },
+              { title: 'Báo cáo chi tiết', desc: 'Xem biểu đồ tiến bộ và nhận xét chi tiết sau mỗi bài kiểm tra.' }
+            ].map((feat, i) => (
+              <div key={i} className="p-8 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-cyan-500/20 transition-colors">
+                <h3 className="text-xl font-bold text-cyan-400 mb-3">{feat.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feat.desc}</p>
               </div>
             ))}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {subjects.map(subject => (
-              <SubjectCard key={subject.id} subject={subject} />
-            ))}
-          </div>
-        )}
-      </section>
+        </section>
+      </div>
     </div>
   );
 }

@@ -7,26 +7,32 @@ import { Unit, Lesson, Exercise, Question, TheorySection } from '@/lib/types';
 import {
     ArrowLeft, Plus, Trash2, Save, Loader2,
     BookOpen, PenTool, ChevronDown, ChevronUp,
-    GripVertical, Copy
+    GripVertical, Download
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { QuestionImporter } from '@/components/question-importer';
 
 interface Props {
     params: Promise<{ subject: string; unit: string }>;
 }
 
 const exerciseTypes = [
-    { value: 'fill-blank', label: 'Dien vao cho trong' },
-    { value: 'multiple-choice', label: 'Trac nghiem' },
-    { value: 'rewrite', label: 'Viet lai cau' },
-    { value: 'select', label: 'Chon dung/sai' },
+    { value: 'fill-blank', label: 'Điền vào chỗ trống' },
+    { value: 'multiple-choice', label: 'Trắc nghiệm' },
+    { value: 'rewrite', label: 'Viết lại câu' },
+    { value: 'select', label: 'Chọn đúng/sai' },
 ];
 
 const theorySectionTypes = [
-    { value: 'formula', label: 'Cong thuc' },
-    { value: 'usage', label: 'Cach dung' },
-    { value: 'note', label: 'Luu y' },
-    { value: 'example', label: 'Vi du' },
-    { value: 'text', label: 'Van ban' },
+    { value: 'formula', label: 'Công thức' },
+    { value: 'usage', label: 'Cách dùng' },
+    { value: 'note', label: 'Lưu ý' },
+    { value: 'example', label: 'Ví dụ' },
+    { value: 'text', label: 'Văn bản' },
 ];
 
 function generateId() {
@@ -49,7 +55,7 @@ function LessonEditor({
     const addTheorySection = () => {
         const newSection: TheorySection = {
             id: generateId(),
-            title: 'Muc moi',
+            title: 'Mục mới',
             type: 'text',
             content: '',
             items: [],
@@ -78,7 +84,7 @@ function LessonEditor({
         const newExercise: Exercise = {
             id: generateId(),
             type: 'fill-blank',
-            instruction: 'Huong dan lam bai',
+            instruction: 'Hướng dẫn làm bài',
             questions: [],
         };
         onUpdate({
@@ -99,62 +105,67 @@ function LessonEditor({
     };
 
     return (
-        <div className="glass-card overflow-hidden">
+        <Card className="overflow-hidden">
             <div
-                className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
+                className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={onToggle}
             >
-                <div className="flex items-center gap-3">
-                    <GripVertical className="w-5 h-5 text-white/30" />
-                    <div>
-                        <input
-                            type="text"
-                            className="bg-transparent border-none text-lg font-semibold focus:outline-none focus:ring-0"
+                <div className="flex items-center gap-3 flex-1">
+                    <GripVertical className="w-5 h-5 text-muted-foreground" />
+                    <div className="flex-1">
+                        <Input
+                            className="bg-transparent border-transparent shadow-none hover:bg-background hover:border-input focus:bg-background focus:border-input text-lg font-semibold px-2 -ml-2 h-auto py-1"
                             value={lesson.title}
                             onChange={(e) => onUpdate({ ...lesson, title: e.target.value })}
                             onClick={(e) => e.stopPropagation()}
-                            placeholder="Ten bai hoc"
+                            placeholder="Tên bài học"
                         />
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    <button
+                    <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={(e) => { e.stopPropagation(); onRemove(); }}
-                        className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     >
                         <Trash2 className="w-4 h-4" />
-                    </button>
-                    {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                    </Button>
+                    {isExpanded ? <ChevronUp className="w-5 h-5 text-muted-foreground" /> : <ChevronDown className="w-5 h-5 text-muted-foreground" />}
                 </div>
             </div>
 
             {isExpanded && (
-                <div className="p-6 pt-2 space-y-6 border-t border-white/5">
-                    <div>
+                <div className="p-6 pt-0 space-y-8 border-t bg-muted/20">
+                    {/* Theory Section */}
+                    <div className="mt-6">
                         <div className="flex items-center justify-between mb-4">
-                            <h4 className="font-medium flex items-center gap-2">
-                                <BookOpen className="w-4 h-4 text-cyan-400" />
-                                Ly thuyet
+                            <h4 className="font-semibold flex items-center gap-2 text-sm text-foreground">
+                                <BookOpen className="w-4 h-4 text-primary" />
+                                Lý thuyết
                             </h4>
-                            <button onClick={addTheorySection} className="btn-ghost text-sm flex items-center gap-1">
-                                <Plus className="w-4 h-4" />
-                                Them muc
-                            </button>
+                            <Button size="sm" variant="outline" onClick={addTheorySection}>
+                                <Plus className="w-3 h-3 mr-1" />
+                                Thêm mục
+                            </Button>
                         </div>
 
                         <div className="space-y-4">
                             {lesson.theory?.sections?.map((section, idx) => (
-                                <div key={section.id} className="p-4 rounded-xl bg-white/5 space-y-3">
-                                    <div className="flex gap-3">
-                                        <input
-                                            type="text"
-                                            className="input-field flex-1"
+                                <div key={section.id} className="p-4 rounded-lg border bg-background space-y-3 relative group">
+                                    <div className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => removeTheorySection(idx)}>
+                                            <Trash2 className="h-3 w-3" />
+                                        </Button>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-[1fr,200px] gap-3">
+                                        <Input
                                             value={section.title}
                                             onChange={(e) => updateTheorySection(idx, { ...section, title: e.target.value })}
-                                            placeholder="Tieu de"
+                                            placeholder="Tiêu đề mục"
                                         />
                                         <select
-                                            className="input-field w-40"
+                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                             value={section.type}
                                             onChange={(e) => updateTheorySection(idx, { ...section, type: e.target.value as TheorySection['type'] })}
                                         >
@@ -162,47 +173,46 @@ function LessonEditor({
                                                 <option key={t.value} value={t.value}>{t.label}</option>
                                             ))}
                                         </select>
-                                        <button
-                                            onClick={() => removeTheorySection(idx)}
-                                            className="p-2 rounded-lg hover:bg-red-500/20 text-red-400"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
                                     </div>
 
-                                    <textarea
-                                        className="input-field resize-none"
+                                    <Textarea
                                         rows={2}
                                         value={section.content}
                                         onChange={(e) => updateTheorySection(idx, { ...section, content: e.target.value })}
-                                        placeholder="Noi dung chinh"
+                                        placeholder="Nội dung chính"
                                     />
 
                                     <div>
-                                        <label className="text-sm text-white/50 mb-1 block">Danh sach (moi dong 1 muc)</label>
-                                        <textarea
-                                            className="input-field resize-none font-mono text-sm"
+                                        <Label className="text-xs text-muted-foreground mb-1 block">Danh sách (mỗi dòng 1 mục)</Label>
+                                        <Textarea
+                                            className="font-mono text-xs"
                                             rows={3}
                                             value={section.items?.join('\n') || ''}
                                             onChange={(e) => updateTheorySection(idx, { ...section, items: e.target.value.split('\n').filter(Boolean) })}
-                                            placeholder="- Muc 1&#10;- Muc 2&#10;- Muc 3"
+                                            placeholder="- Mục 1&#10;- Mục 2&#10;- Mục 3"
                                         />
                                     </div>
                                 </div>
                             ))}
+                            {(!lesson.theory?.sections || lesson.theory.sections.length === 0) && (
+                                <div className="text-center py-4 text-xs text-muted-foreground border border-dashed rounded-lg">
+                                    Chưa có nội dung lý thuyết
+                                </div>
+                            )}
                         </div>
                     </div>
 
+                    {/* Exercises Section */}
                     <div>
                         <div className="flex items-center justify-between mb-4">
-                            <h4 className="font-medium flex items-center gap-2">
-                                <PenTool className="w-4 h-4 text-emerald-400" />
-                                Bai tap
+                            <h4 className="font-semibold flex items-center gap-2 text-sm text-foreground">
+                                <PenTool className="w-4 h-4 text-primary" />
+                                Bài tập
                             </h4>
-                            <button onClick={addExercise} className="btn-ghost text-sm flex items-center gap-1">
-                                <Plus className="w-4 h-4" />
-                                Them bai tap
-                            </button>
+                            <Button size="sm" variant="outline" onClick={addExercise}>
+                                <Plus className="w-3 h-3 mr-1" />
+                                Thêm bài tập
+                            </Button>
                         </div>
 
                         <div className="space-y-4">
@@ -214,11 +224,16 @@ function LessonEditor({
                                     onRemove={() => removeExercise(idx)}
                                 />
                             ))}
+                            {(!lesson.exercises || lesson.exercises.length === 0) && (
+                                <div className="text-center py-4 text-xs text-muted-foreground border border-dashed rounded-lg">
+                                    Chưa có bài tập nào
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+        </Card>
     );
 }
 
@@ -257,109 +272,126 @@ function ExerciseEditor({
         onUpdate({ ...exercise, questions });
     };
 
+    const handleExport = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exercise.questions, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `exercise-${exercise.id}.json`);
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    };
+
     return (
-        <div className="p-4 rounded-xl bg-white/5 space-y-4">
-            <div className="flex gap-3 items-start">
-                <div className="flex-1 space-y-3">
-                    <div className="flex gap-3">
-                        <select
-                            className="input-field w-48"
-                            value={exercise.type}
-                            onChange={(e) => onUpdate({ ...exercise, type: e.target.value as Exercise['type'] })}
-                        >
-                            {exerciseTypes.map(t => (
-                                <option key={t.value} value={t.value}>{t.label}</option>
-                            ))}
-                        </select>
-                        <input
-                            type="text"
-                            className="input-field flex-1"
+        <div className="p-4 rounded-lg border bg-background space-y-4">
+            <div className="flex gap-4 items-start">
+                <div className="flex-1 space-y-4">
+                    <div className="flex gap-4">
+                        <div className="w-48">
+                            <select
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                value={exercise.type}
+                                onChange={(e) => onUpdate({ ...exercise, type: e.target.value as Exercise['type'] })}
+                            >
+                                {exerciseTypes.map(t => (
+                                    <option key={t.value} value={t.value}>{t.label}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <Input
                             value={exercise.instruction}
                             onChange={(e) => onUpdate({ ...exercise, instruction: e.target.value })}
-                            placeholder="Huong dan lam bai"
+                            placeholder="Hướng dẫn làm bài"
                         />
                     </div>
                 </div>
-                <button onClick={onRemove} className="p-2 rounded-lg hover:bg-red-500/20 text-red-400">
+                <Button variant="ghost" size="icon" onClick={onRemove} className="text-destructive hover:text-destructive hover:bg-destructive/10">
                     <Trash2 className="w-4 h-4" />
-                </button>
+                </Button>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3 pl-4 border-l-2 border-muted">
                 {exercise.questions?.map((q, idx) => (
-                    <div key={q.id} className="p-3 rounded-lg bg-white/5 space-y-2">
-                        <div className="flex items-start gap-2">
-                            <span className="w-6 h-6 rounded bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xs font-medium flex-shrink-0 mt-2">
+                    <div key={q.id} className="p-3 rounded-md bg-muted/30 space-y-3">
+                        <div className="flex items-start gap-3">
+                            <span className="flex h-6 w-6 items-center justify-center rounded bg-primary/10 text-primary text-xs font-medium shrink-0 mt-1">
                                 {idx + 1}
                             </span>
-                            <div className="flex-1 space-y-2">
-                                <textarea
-                                    className="input-field resize-none text-sm"
+                            <div className="flex-1 space-y-3">
+                                <Textarea
                                     rows={2}
                                     value={q.text}
                                     onChange={(e) => updateQuestion(idx, { ...q, text: e.target.value })}
-                                    placeholder={exercise.type === 'fill-blank' ? 'Cau hoi (dung ______ cho cho trong)' : 'Cau hoi'}
+                                    placeholder={exercise.type === 'fill-blank' ? 'Câu hỏi (dùng ______ cho chỗ trống)' : 'Câu hỏi'}
                                 />
 
                                 {exercise.type === 'fill-blank' && (
-                                    <input
-                                        type="text"
-                                        className="input-field text-sm"
+                                    <Input
                                         value={Array.isArray(q.answer) ? q.answer.join(', ') : q.answer}
                                         onChange={(e) => updateQuestion(idx, { ...q, answer: e.target.value.split(',').map(s => s.trim()) })}
-                                        placeholder="Dap an (cach nhau boi dau phay)"
+                                        placeholder="Đáp án (cách nhau bởi dấu phẩy)"
                                     />
                                 )}
 
                                 {(exercise.type === 'multiple-choice' || exercise.type === 'select') && (
-                                    <div className="space-y-2">
-                                        <input
-                                            type="text"
-                                            className="input-field text-sm"
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <Input
                                             value={q.options?.join(', ') || ''}
                                             onChange={(e) => updateQuestion(idx, { ...q, options: e.target.value.split(',').map(s => s.trim()) })}
-                                            placeholder="Cac lua chon (cach nhau boi dau phay)"
+                                            placeholder="Các lựa chọn (cách nhau bởi dấu phẩy)"
                                         />
-                                        <input
-                                            type="text"
-                                            className="input-field text-sm"
+                                        <Input
                                             value={String(q.answer)}
                                             onChange={(e) => updateQuestion(idx, { ...q, answer: e.target.value })}
-                                            placeholder="Dap an dung"
+                                            placeholder="Đáp án đúng"
                                         />
                                     </div>
                                 )}
 
                                 {exercise.type === 'rewrite' && (
-                                    <input
-                                        type="text"
-                                        className="input-field text-sm"
+                                    <Input
                                         value={String(q.answer)}
                                         onChange={(e) => updateQuestion(idx, { ...q, answer: e.target.value })}
-                                        placeholder="Cau tra loi dung"
+                                        placeholder="Câu trả lời đúng"
                                     />
                                 )}
 
-                                <input
-                                    type="text"
-                                    className="input-field text-sm"
+                                <Input
                                     value={q.explanation || ''}
                                     onChange={(e) => updateQuestion(idx, { ...q, explanation: e.target.value })}
-                                    placeholder="Giai thich (khong bat buoc)"
+                                    placeholder="Giải thích (không bắt buộc)"
                                 />
                             </div>
-                            <button onClick={() => removeQuestion(idx)} className="p-1.5 rounded hover:bg-red-500/20 text-red-400">
-                                <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            <Button variant="ghost" size="icon" onClick={() => removeQuestion(idx)} className="h-6 w-6 text-destructive">
+                                <Trash2 className="w-3 h-3" />
+                            </Button>
                         </div>
                     </div>
                 ))}
             </div>
 
-            <button onClick={addQuestion} className="btn-ghost text-sm w-full flex items-center justify-center gap-1 border border-dashed border-white/10 hover:border-cyan-500/30">
-                <Plus className="w-4 h-4" />
-                Them cau hoi
-            </button>
+            <div className="flex gap-2">
+                <Button variant="outline" size="sm" className="flex-1 border-dashed" onClick={addQuestion}>
+                    <Plus className="w-3 h-3 mr-1" />
+                    Thêm câu hỏi
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleExport} title="Export JSON">
+                    <Download className="w-3 h-3" />
+                </Button>
+                <QuestionImporter onImport={(data: any[]) => {
+                    const newQuestions = data.map((item: any) => ({
+                        id: generateId(),
+                        text: item.text || '',
+                        options: item.options,
+                        answer: item.answer || '',
+                        explanation: item.explanation || ''
+                    }));
+                    onUpdate({
+                        ...exercise,
+                        questions: [...(exercise.questions || []), ...newQuestions]
+                    });
+                }} />
+            </div>
         </div>
     );
 }
@@ -421,7 +453,7 @@ export default function AdminUnitPage({ params }: Props) {
     const addLesson = () => {
         const newLesson: Lesson = {
             id: generateId(),
-            title: 'Bai hoc moi',
+            title: 'Bài học mới',
             theory: { sections: [] },
             exercises: [],
         };
@@ -452,116 +484,109 @@ export default function AdminUnitPage({ params }: Props) {
 
     if (loading) {
         return (
-            <div className="max-w-5xl mx-auto px-4 py-8">
-                <div className="space-y-4">
-                    <div className="h-8 skeleton rounded w-32"></div>
-                    <div className="glass-card p-6 h-64"></div>
-                </div>
+            <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+                <div className="h-8 w-48 bg-muted animate-pulse rounded" />
+                <div className="h-96 w-full bg-muted animate-pulse rounded-lg" />
             </div>
         );
     }
 
     return (
-        <div className="max-w-5xl mx-auto px-4 py-8">
-            <Link
-                href={`/admin/subject/${subjectId}`}
-                className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-6 transition-colors"
-            >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Quay lai</span>
+        <div className="max-w-5xl mx-auto px-4 py-8 pb-32">
+            <Link href={`/admin/subject/${subjectId}`}>
+                <Button variant="ghost" className="mb-6 pl-0 hover:pl-0 hover:bg-transparent text-muted-foreground hover:text-foreground">
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Quay lại
+                </Button>
             </Link>
 
             <div className="flex items-center justify-between mb-8">
-                <h1 className="text-2xl font-bold">
-                    {isNew ? 'Tao bai hoc moi' : 'Chinh sua bai hoc'}
-                </h1>
-                <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center gap-2">
-                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                    Luu
-                </button>
-            </div>
-
-            <div className="glass-card p-6 mb-8">
-                <h2 className="text-lg font-semibold mb-4">Thong tin chung</h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label className="block text-sm text-white/60 mb-2">ID (tu dong tao)</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            value={unit.id}
-                            onChange={(e) => setUnit({ ...unit, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
-                            placeholder="unit-1"
-                            disabled={!isNew}
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block text-sm text-white/60 mb-2">Thu tu</label>
-                        <input
-                            type="number"
-                            className="input-field"
-                            value={unit.order}
-                            onChange={(e) => setUnit({ ...unit, order: parseInt(e.target.value) || 0 })}
-                        />
-                    </div>
-
-                    <div className="md:col-span-2">
-                        <label className="block text-sm text-white/60 mb-2">Tieu de</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            value={unit.title}
-                            onChange={(e) => setUnit({ ...unit, title: e.target.value })}
-                            placeholder="VD: UNIT 1: LIFE STORIES"
-                        />
-                    </div>
-
-                    <div className="md:col-span-2">
-                        <label className="block text-sm text-white/60 mb-2">Mo ta</label>
-                        <input
-                            type="text"
-                            className="input-field"
-                            value={unit.description}
-                            onChange={(e) => setUnit({ ...unit, description: e.target.value })}
-                            placeholder="Mo ta ngan ve noi dung bai hoc"
-                        />
-                    </div>
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        {isNew ? 'Tạo Bài học Mới' : 'Chỉnh sửa Bài học'}
+                    </h1>
+                    <p className="text-muted-foreground mt-1">Biên soạn nội dung lý thuyết và bài tập.</p>
                 </div>
+                <Button onClick={handleSave} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    Lưu thay đổi
+                </Button>
             </div>
 
-            <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Noi dung bai hoc</h2>
-                <button onClick={addLesson} className="btn-secondary text-sm py-2 px-4 flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    Them bai
-                </button>
-            </div>
-
-            <div className="space-y-4">
-                {unit.lessons?.map((lesson, idx) => (
-                    <LessonEditor
-                        key={lesson.id}
-                        lesson={lesson}
-                        onUpdate={(l) => updateLesson(idx, l)}
-                        onRemove={() => removeLesson(idx)}
-                        isExpanded={expandedLessons.has(lesson.id)}
-                        onToggle={() => toggleLesson(lesson.id)}
-                    />
-                ))}
-
-                {(!unit.lessons || unit.lessons.length === 0) && (
-                    <div className="glass-card p-12 text-center">
-                        <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-                            <BookOpen className="w-8 h-8 text-white/30" />
+            <Card className="mb-8">
+                <CardHeader>
+                    <CardTitle>Thông tin chung</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label>ID (tự động tạo)</Label>
+                            <Input
+                                value={unit.id}
+                                onChange={(e) => setUnit({ ...unit, id: e.target.value.toLowerCase().replace(/\s/g, '-') })}
+                                placeholder="unit-1"
+                                disabled={!isNew}
+                            />
                         </div>
-                        <p className="text-white/50 mb-4">Chua co bai hoc nao</p>
-                        <button onClick={addLesson} className="btn-primary text-sm py-2 px-4">
-                            Tao bai hoc dau tien
-                        </button>
+                        <div className="space-y-2">
+                            <Label>Thứ tự</Label>
+                            <Input
+                                type="number"
+                                value={unit.order}
+                                onChange={(e) => setUnit({ ...unit, order: parseInt(e.target.value) || 0 })}
+                            />
+                        </div>
+                        <div className="md:col-span-2 space-y-2">
+                            <Label>Tiêu đề</Label>
+                            <Input
+                                value={unit.title}
+                                onChange={(e) => setUnit({ ...unit, title: e.target.value })}
+                                placeholder="VD: UNIT 1: LIFE STORIES"
+                            />
+                        </div>
+                        <div className="md:col-span-2 space-y-2">
+                            <Label>Mô tả</Label>
+                            <Input
+                                value={unit.description}
+                                onChange={(e) => setUnit({ ...unit, description: e.target.value })}
+                                placeholder="Mô tả ngắn về nội dung bài học"
+                            />
+                        </div>
                     </div>
-                )}
+                </CardContent>
+            </Card>
+
+            <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold">Nội dung chi tiết</h2>
+                    <Button onClick={addLesson} variant="secondary">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Thêm phần học
+                    </Button>
+                </div>
+
+                <div className="space-y-4">
+                    {unit.lessons?.map((lesson, idx) => (
+                        <LessonEditor
+                            key={lesson.id}
+                            lesson={lesson}
+                            onUpdate={(l) => updateLesson(idx, l)}
+                            onRemove={() => removeLesson(idx)}
+                            isExpanded={expandedLessons.has(lesson.id)}
+                            onToggle={() => toggleLesson(lesson.id)}
+                        />
+                    ))}
+
+                    {(!unit.lessons || unit.lessons.length === 0) && (
+                        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-lg bg-muted/10">
+                            <BookOpen className="w-10 h-10 text-muted-foreground mb-4 opacity-20" />
+                            <p className="text-muted-foreground text-sm mb-4">Chưa có phần học nào</p>
+                            <Button onClick={addLesson} variant="outline">
+                                Tạo phần học đầu tiên
+                            </Button>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

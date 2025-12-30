@@ -68,3 +68,18 @@ export interface UserProgress {
     score: number;
     lastAttempt: Date;
 }
+
+export interface Exam {
+    _id?: string;
+    id: string;
+    title: string;
+    description?: string;
+    type: '15-minute' | '45-minute' | 'midterm-1' | 'final-1' | 'midterm-2' | 'final-2' | 'practice';
+    duration: number; // in minutes
+    questionCount: number;
+    subjectId?: string;
+    questions: Question[]; // Using the same Question definition
+    isActive: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
