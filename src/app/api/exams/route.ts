@@ -8,21 +8,34 @@ export async function GET(request: Request) {
         const type = searchParams.get('type');
         const subjectId = searchParams.get('subjectId');
 
+        console.log('[GET /api/exams] Starting request...');
+        console.log('[GET /api/exams] MONGODB_URI exists:', !!process.env.MONGODB_URI);
+
         const db = await connectToDatabase();
         if (!db) {
-            return NextResponse.json([], { status: 500 });
+            console.error('[GET /api/exams] Failed to connect to database - MONGODB_URI may not be set');
+            return NextResponse.json({
+                error: 'Database connection failed',
+                message: 'MONGODB_URI environment variable may not be configured'
+            }, { status: 500 });
         }
 
-        let query: any = { isActive: true };
+        console.log('[GET /api/exams] Database connected successfully');
+
+        let query: Record<string, unknown> = { isActive: true };
         if (type) query.type = type;
         if (subjectId) query.subjectId = subjectId;
 
         const exams = await Exam.find(query).sort({ createdAt: -1 });
+        console.log('[GET /api/exams] Found', exams.length, 'exams');
         return NextResponse.json(exams);
 
     } catch (error) {
-        console.error('Error fetching exams:', error);
-        return NextResponse.json([], { status: 500 });
+        console.error('[GET /api/exams] Error:', error);
+        return NextResponse.json({
+            error: 'Internal server error',
+            message: error instanceof Error ? error.message : 'Unknown error'
+        }, { status: 500 });
     }
 }
 

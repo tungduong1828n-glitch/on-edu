@@ -34,10 +34,17 @@ export async function connectToDatabase() {
     if (!cached.promise) {
         const opts = {
             bufferCommands: false,
+            serverSelectionTimeoutMS: 10000,
+            socketTimeoutMS: 45000,
+            connectTimeoutMS: 10000,
         };
 
         cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+            console.log('[MongoDB] Connected successfully');
             return mongoose;
+        }).catch((error) => {
+            console.error('[MongoDB] Connection failed:', error.message);
+            throw error;
         });
     }
 
