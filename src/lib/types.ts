@@ -53,6 +53,7 @@ export interface Exercise {
 
 export interface Question {
     id: string;
+    type?: string;
     text: string;
     blanks?: string[];
     options?: string[];
