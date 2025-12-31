@@ -51,9 +51,9 @@ export function StatCard({
                     </div>
                 )}
             </div>
-            <div className="mt-3 flex items-baseline gap-2">
+            <div className="mt-4 flex items-center gap-3">
                 {Icon && (
-                    <div className="p-2 rounded-lg bg-primary/10">
+                    <div className="p-2.5 rounded-lg bg-primary/10 shrink-0">
                         <Icon className="h-5 w-5 text-primary" />
                     </div>
                 )}

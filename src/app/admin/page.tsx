@@ -58,7 +58,7 @@ export default function AdminDashboard() {
     };
 
     const handleDeleteSelected = async () => {
-        if (!confirm(`Ban co chac muon xoa ${selectedRows.size} muc da chon?`)) return;
+        if (!confirm(`Bạn có chắc muốn xóa ${selectedRows.size} mục đã chọn?`)) return;
         try {
             const res = await fetch('/api/exams', {
                 method: 'DELETE',
@@ -184,7 +184,7 @@ export default function AdminDashboard() {
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 type="search"
-                                placeholder="Tim kiem..."
+                                placeholder="Tìm kiếm..."
                                 className="w-64 pl-8"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -193,26 +193,26 @@ export default function AdminDashboard() {
                         <Dialog open={openExamDialog} onOpenChange={setOpenExamDialog}>
                             <DialogTrigger asChild>
                                 <Button size="sm">
-                                    <Plus className="mr-2 h-4 w-4" /> Tao moi
+                                    <Plus className="mr-2 h-4 w-4" /> Tạo mới
                                 </Button>
                             </DialogTrigger>
                             <DialogContent>
                                 <DialogHeader>
-                                    <DialogTitle>Tao De thi moi</DialogTitle>
-                                    <DialogDescription>Nhap thong tin co ban cho de thi.</DialogDescription>
+                                    <DialogTitle>Tạo Đề thi mới</DialogTitle>
+                                    <DialogDescription>Nhập thông tin cơ bản cho đề thi.</DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="title">Ten de thi</Label>
+                                        <Label htmlFor="title">Tên đề thi</Label>
                                         <Input
                                             id="title"
                                             value={newExam.title}
                                             onChange={(e) => setNewExam({ ...newExam, title: e.target.value })}
-                                            placeholder="VD: Kiem tra 15 phut - Unit 1"
+                                            placeholder="VD: Kiểm tra 15 phút - Unit 1"
                                         />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="duration">Thoi gian (phut)</Label>
+                                        <Label htmlFor="duration">Thời gian (phút)</Label>
                                         <Input
                                             id="duration"
                                             type="number"
@@ -221,23 +221,23 @@ export default function AdminDashboard() {
                                         />
                                     </div>
                                     <div className="grid gap-2">
-                                        <Label htmlFor="type">Loai de thi</Label>
+                                        <Label htmlFor="type">Loại đề thi</Label>
                                         <Select
                                             value={newExam.type}
                                             onChange={(e) => setNewExam({ ...newExam, type: e.target.value as any })}
                                             options={[
-                                                { value: "15-minute", label: "15 Phut" },
-                                                { value: "45-minute", label: "45 Phut" },
-                                                { value: "midterm-1", label: "Giua ky 1" },
-                                                { value: "final-1", label: "Cuoi ky 1" },
-                                                { value: "practice", label: "Luyen tap" },
+                                                { value: "15-minute", label: "15 Phút" },
+                                                { value: "45-minute", label: "45 Phút" },
+                                                { value: "midterm-1", label: "Giữa kỳ 1" },
+                                                { value: "final-1", label: "Cuối kỳ 1" },
+                                                { value: "practice", label: "Luyện tập" },
                                             ]}
                                         />
                                     </div>
                                 </div>
                                 <DialogFooter>
-                                    <Button variant="outline" onClick={() => setOpenExamDialog(false)}>Huy</Button>
-                                    <Button onClick={handleCreateExam}>Tao moi</Button>
+                                    <Button variant="outline" onClick={() => setOpenExamDialog(false)}>Hủy</Button>
+                                    <Button onClick={handleCreateExam}>Tạo mới</Button>
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
@@ -257,32 +257,28 @@ export default function AdminDashboard() {
                                 <div className="space-y-6">
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                         <StatCard
-                                            title="Tong Mon hoc"
+                                            title="Tổng Môn học"
                                             value={subjects.length}
-                                            trend={{ direction: "up", value: "+12.5%" }}
-                                            description="Tang tu thang truoc"
+                                            description="Tăng từ tháng trước"
                                             icon={BookOpen}
                                         />
                                         <StatCard
-                                            title="Tong Bai hoc"
+                                            title="Tổng Bài học"
                                             value={totalUnits}
-                                            trend={{ direction: "down", value: "-20%" }}
-                                            description="Can bo sung them"
+                                            description="Cần bổ sung thêm"
                                             icon={FileText}
                                         />
                                         <StatCard
-                                            title="Tong Bai tap"
+                                            title="Tổng Bài tập"
                                             value={totalExercises}
-                                            trend={{ direction: "up", value: "+12.5%" }}
-                                            description="Hoan thanh tot"
+                                            description="Hoàn thành tốt"
                                             icon={TrendingUp}
                                         />
                                         <StatCard
-                                            title="Hoc sinh"
-                                            value="1,234"
-                                            trend={{ direction: "up", value: "+4.5%" }}
-                                            description="+180 tu thang truoc"
-                                            icon={Users}
+                                            title="Đề thi"
+                                            value={exams.length}
+                                            description={`${exams.length > 0 ? '+' + exams.length : '0'} đề thi có sẵn`}
+                                            icon={PenTool}
                                         />
                                     </div>
 
@@ -290,9 +286,9 @@ export default function AdminDashboard() {
 
                                     <Tabs defaultValue="subjects" className="w-full">
                                         <TabsList>
-                                            <TabsTrigger value="subjects">Mon hoc</TabsTrigger>
-                                            <TabsTrigger value="exams">De thi</TabsTrigger>
-                                            <TabsTrigger value="content">Noi dung</TabsTrigger>
+                                            <TabsTrigger value="subjects">Môn học</TabsTrigger>
+                                            <TabsTrigger value="exams">Đề thi</TabsTrigger>
+                                            <TabsTrigger value="content">Nội dung</TabsTrigger>
                                         </TabsList>
 
                                         <TabsContent value="subjects" className="mt-4">
@@ -308,10 +304,10 @@ export default function AdminDashboard() {
                                                                     onChange={() => toggleSelectAll(subjects.map(s => s.id))}
                                                                 />
                                                             </TableHead>
-                                                            <TableHead>Ten mon hoc</TableHead>
-                                                            <TableHead>Loai</TableHead>
-                                                            <TableHead>Trang thai</TableHead>
-                                                            <TableHead>Bai hoc</TableHead>
+                                                            <TableHead>Tên môn học</TableHead>
+                                                            <TableHead>Loại</TableHead>
+                                                            <TableHead>Trạng thái</TableHead>
+                                                            <TableHead>Bài học</TableHead>
                                                             <TableHead className="text-right"></TableHead>
                                                         </TableRow>
                                                     </TableHeader>
@@ -330,11 +326,11 @@ export default function AdminDashboard() {
                                                                     </TableCell>
                                                                     <TableCell className="font-medium">{subject.name}</TableCell>
                                                                     <TableCell>
-                                                                        <Badge variant="outline">Mon hoc</Badge>
+                                                                        <Badge variant="outline">Môn học</Badge>
                                                                     </TableCell>
                                                                     <TableCell>
                                                                         <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20">
-                                                                            Hoat dong
+                                                                            Hoạt động
                                                                         </Badge>
                                                                     </TableCell>
                                                                     <TableCell>{subjectUnits.length}</TableCell>
@@ -357,12 +353,12 @@ export default function AdminDashboard() {
                                             <div className="flex items-center justify-between mb-4">
                                                 <div className="text-sm text-muted-foreground">
                                                     {selectedRows.size > 0 && (
-                                                        <span>{selectedRows.size} muc da chon</span>
+                                                        <span>{selectedRows.size} mục đã chọn</span>
                                                     )}
                                                 </div>
                                                 {selectedRows.size > 0 && (
                                                     <Button variant="destructive" size="sm" onClick={handleDeleteSelected}>
-                                                        <Trash2 className="mr-2 h-4 w-4" /> Xoa
+                                                        <Trash2 className="mr-2 h-4 w-4" /> Xóa
                                                     </Button>
                                                 )}
                                             </div>
@@ -378,10 +374,10 @@ export default function AdminDashboard() {
                                                                     onChange={() => toggleSelectAll(paginatedExams.map(e => e.id))}
                                                                 />
                                                             </TableHead>
-                                                            <TableHead>Ten de thi</TableHead>
-                                                            <TableHead>Loai</TableHead>
-                                                            <TableHead>Thoi gian</TableHead>
-                                                            <TableHead>So cau</TableHead>
+                                                            <TableHead>Tên đề thi</TableHead>
+                                                            <TableHead>Loại</TableHead>
+                                                            <TableHead>Thời gian</TableHead>
+                                                            <TableHead>Số câu</TableHead>
                                                             <TableHead className="text-right"></TableHead>
                                                         </TableRow>
                                                     </TableHeader>
@@ -400,7 +396,7 @@ export default function AdminDashboard() {
                                                                 <TableCell>
                                                                     <Badge variant="outline">{exam.type}</Badge>
                                                                 </TableCell>
-                                                                <TableCell>{exam.duration} phut</TableCell>
+                                                                <TableCell>{exam.duration} phút</TableCell>
                                                                 <TableCell>{exam.questions?.length || exam.questionCount || 0}</TableCell>
                                                                 <TableCell className="text-right">
                                                                     <Link href={`/admin/exams/${exam.id}`}>
@@ -417,7 +413,7 @@ export default function AdminDashboard() {
 
                                             <div className="flex items-center justify-between mt-4">
                                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                                    <span>Hien thi</span>
+                                                    <span>Hiển thị</span>
                                                     <Select
                                                         value={rowsPerPage.toString()}
                                                         onChange={(e) => setRowsPerPage(parseInt(e.target.value))}
@@ -428,7 +424,7 @@ export default function AdminDashboard() {
                                                         ]}
                                                         className="w-16"
                                                     />
-                                                    <span>muc</span>
+                                                    <span>mục</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-sm text-muted-foreground">
@@ -459,7 +455,7 @@ export default function AdminDashboard() {
                                         <TabsContent value="content" className="mt-4">
                                             <div className="rounded-lg border p-8 text-center text-muted-foreground">
                                                 <FileText className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                                                <p>Chon muc "Mon hoc" hoac "De thi" de quan ly noi dung.</p>
+                                                <p>Chọn mục "Môn học" hoặc "Đề thi" để quản lý nội dung.</p>
                                             </div>
                                         </TabsContent>
                                     </Tabs>
@@ -470,12 +466,12 @@ export default function AdminDashboard() {
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h1 className="text-2xl font-bold">Mon hoc</h1>
-                                            <p className="text-muted-foreground">Quan ly cac mon hoc trong he thong.</p>
+                                            <h1 className="text-2xl font-bold">Môn học</h1>
+                                            <p className="text-muted-foreground">Quản lý các môn học trong hệ thống.</p>
                                         </div>
                                         <Link href="/admin/subject/new">
                                             <Button>
-                                                <Plus className="mr-2 h-4 w-4" /> Them mon hoc
+                                                <Plus className="mr-2 h-4 w-4" /> Thêm môn học
                                             </Button>
                                         </Link>
                                     </div>
@@ -490,7 +486,7 @@ export default function AdminDashboard() {
                                                                 <BookOpen className="h-5 w-5 text-primary" />
                                                             </div>
                                                             <Badge variant="outline">
-                                                                {subjectUnits.length} bai hoc
+                                                                {subjectUnits.length} bài học
                                                             </Badge>
                                                         </div>
                                                         <h3 className="font-semibold group-hover:text-primary transition-colors">{subject.name}</h3>
@@ -507,8 +503,8 @@ export default function AdminDashboard() {
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h1 className="text-2xl font-bold">Quan ly De thi</h1>
-                                            <p className="text-muted-foreground">Tao va quan ly cac de thi.</p>
+                                            <h1 className="text-2xl font-bold">Quản lý Đề thi</h1>
+                                            <p className="text-muted-foreground">Tạo và quản lý các đề thi.</p>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -519,19 +515,19 @@ export default function AdminDashboard() {
                                             <div className="p-3 rounded-full bg-primary/10 mb-3">
                                                 <Plus className="h-6 w-6 text-primary" />
                                             </div>
-                                            <p className="font-semibold">Tao de thi moi</p>
-                                            <p className="text-sm text-muted-foreground">Bat dau bien soan de thi</p>
+                                            <p className="font-semibold">Tạo đề thi mới</p>
+                                            <p className="text-sm text-muted-foreground">Bắt đầu biên soạn đề thi</p>
                                         </div>
                                         {exams.map((exam) => (
                                             <Link key={exam.id} href={`/admin/exams/${exam.id}`} className="block">
                                                 <div className="rounded-xl border bg-card p-6 hover:border-primary/50 transition-all cursor-pointer">
                                                     <div className="flex items-center justify-between mb-4">
                                                         <Badge variant="outline">{exam.type}</Badge>
-                                                        <span className="text-sm text-muted-foreground">{exam.duration} phut</span>
+                                                        <span className="text-sm text-muted-foreground">{exam.duration} phút</span>
                                                     </div>
                                                     <h3 className="font-semibold">{exam.title}</h3>
                                                     <p className="text-sm text-muted-foreground mt-1">
-                                                        {exam.questions?.length || exam.questionCount || 0} cau hoi
+                                                        {exam.questions?.length || exam.questionCount || 0} câu hỏi
                                                     </p>
                                                 </div>
                                             </Link>
@@ -543,8 +539,8 @@ export default function AdminDashboard() {
                             {activeSection === 'content' && (
                                 <div className="space-y-6">
                                     <div>
-                                        <h1 className="text-2xl font-bold">Quan ly Noi dung</h1>
-                                        <p className="text-muted-foreground">Chi tiet cac bai hoc va bai tap theo mon.</p>
+                                        <h1 className="text-2xl font-bold">Quản lý Nội dung</h1>
+                                        <p className="text-muted-foreground">Chi tiết các bài học và bài tập theo môn.</p>
                                     </div>
                                     <div className="space-y-4">
                                         {subjects.map(subject => {
@@ -560,7 +556,7 @@ export default function AdminDashboard() {
                                                         </div>
                                                         <Link href={`/admin/subject/${subject.id}/unit/new`}>
                                                             <Button variant="outline" size="sm">
-                                                                <Plus className="mr-2 h-4 w-4" /> Them bai
+                                                                <Plus className="mr-2 h-4 w-4" /> Thêm bài
                                                             </Button>
                                                         </Link>
                                                     </div>
@@ -578,14 +574,14 @@ export default function AdminDashboard() {
                                                                             <span className="font-medium">{unit.title}</span>
                                                                         </div>
                                                                         <span className="text-sm text-muted-foreground">
-                                                                            {unit.lessons?.length || 0} muc
+                                                                            {unit.lessons?.length || 0} mục
                                                                         </span>
                                                                     </Link>
                                                                 ))}
                                                             </div>
                                                         ) : (
                                                             <div className="text-center py-8 text-muted-foreground text-sm">
-                                                                Chua co noi dung
+                                                                Chưa có nội dung
                                                             </div>
                                                         )}
                                                     </div>
