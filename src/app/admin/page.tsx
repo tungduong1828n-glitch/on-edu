@@ -122,6 +122,21 @@ export default function AdminDashboard() {
         }
     };
 
+    const handleDeleteResult = async (resultId: string) => {
+        try {
+            const res = await fetch(`/api/exam-results/${resultId}`, {
+                method: 'DELETE',
+            });
+            if (res.ok) {
+                setExamResults(prev => prev.filter(r => String(r._id || r.id) !== resultId));
+            } else {
+                console.error('Delete failed:', res.status);
+            }
+        } catch (error) {
+            console.error('Failed to delete:', error);
+        }
+    };
+
     const totalUnits = Object.values(units).reduce((acc, u) => acc + u.length, 0);
     const totalExercises = Object.values(units).reduce((acc, subjectUnits) =>
         acc + subjectUnits.reduce((uAcc, u) =>
@@ -600,10 +615,10 @@ export default function AdminDashboard() {
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <h1 className="text-2xl font-bold">Lich su lam bai</h1>
-                                            <p className="text-muted-foreground">Xem ket qua thi cua nguoi dung.</p>
+                                            <h1 className="text-2xl font-bold">Lịch sử làm bài</h1>
+                                            <p className="text-muted-foreground">Xem kết quả thi của người dùng.</p>
                                         </div>
-                                        <Badge variant="outline">{examResults.length} ket qua</Badge>
+                                        <Badge variant="outline">{examResults.length} kết quả</Badge>
                                     </div>
 
                                     {examResults.length > 0 ? (
@@ -611,20 +626,21 @@ export default function AdminDashboard() {
                                             <Table>
                                                 <TableHeader>
                                                     <TableRow>
-                                                        <TableHead>Nguoi dung</TableHead>
-                                                        <TableHead>De thi</TableHead>
-                                                        <TableHead className="text-center">Diem</TableHead>
-                                                        <TableHead className="text-center">Dung</TableHead>
+                                                        <TableHead>Người dùng</TableHead>
+                                                        <TableHead>Đề thi</TableHead>
+                                                        <TableHead className="text-center">Điểm</TableHead>
+                                                        <TableHead className="text-center">Đúng</TableHead>
                                                         <TableHead className="text-center">Sai</TableHead>
-                                                        <TableHead className="text-center">Thoi gian</TableHead>
-                                                        <TableHead>Ngay nop</TableHead>
+                                                        <TableHead className="text-center">Thời gian</TableHead>
+                                                        <TableHead>Ngày giờ</TableHead>
+                                                        <TableHead></TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
                                                     {examResults.map((result) => (
-                                                        <TableRow key={result.id}>
+                                                        <TableRow key={result.id || result._id}>
                                                             <TableCell className="font-medium">
-                                                                {result.userName || 'Nguoi dung'}
+                                                                {result.userName || 'Người dùng'}
                                                             </TableCell>
                                                             <TableCell>
                                                                 <span className="line-clamp-1">{result.examTitle}</span>
@@ -655,11 +671,21 @@ export default function AdminDashboard() {
                                                             <TableCell className="text-center">
                                                                 <span className="flex items-center justify-center gap-1 text-muted-foreground">
                                                                     <Clock className="h-3 w-3" />
-                                                                    {Math.floor((result.timeSpent || 0) / 60)}p
+                                                                    {Math.floor((result.timeSpent || 0) / 60)}p {(result.timeSpent || 0) % 60}s
                                                                 </span>
                                                             </TableCell>
-                                                            <TableCell className="text-muted-foreground text-sm">
-                                                                {result.submittedAt ? new Date(result.submittedAt).toLocaleDateString('vi-VN') : '-'}
+                                                            <TableCell className="text-muted-foreground text-sm whitespace-nowrap">
+                                                                {result.submittedAt ? new Date(result.submittedAt).toLocaleString() : '-'}
+                                                            </TableCell>
+                                                            <TableCell className="text-right">
+                                                                <button
+                                                                    type="button"
+                                                                    style={{ cursor: 'pointer', position: 'relative', zIndex: 10 }}
+                                                                    className="h-10 w-10 p-2 inline-flex items-center justify-center rounded-md text-red-500 hover:bg-red-500/20 hover:text-red-600 transition-colors border border-red-500/30"
+                                                                    onClick={() => handleDeleteResult(String(result._id || result.id))}
+                                                                >
+                                                                    <Trash2 className="h-4 w-4 pointer-events-none" />
+                                                                </button>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
@@ -669,9 +695,9 @@ export default function AdminDashboard() {
                                     ) : (
                                         <div className="rounded-xl border bg-card p-12 text-center">
                                             <History className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                                            <p className="text-lg font-medium mb-1">Chua co lich su thi</p>
+                                            <p className="text-lg font-medium mb-1">Chưa có lịch sử thi</p>
                                             <p className="text-sm text-muted-foreground">
-                                                Khi nguoi dung hoan thanh bai thi, ket qua se hien thi o day.
+                                                Khi người dùng hoàn thành bài thi, kết quả sẽ hiển thị ở đây.
                                             </p>
                                         </div>
                                     )}

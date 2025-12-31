@@ -44,6 +44,12 @@ function ExamContent() {
     const [showHint, setShowHint] = useState(false);
     const [isReviewMode, setIsReviewMode] = useState(false);
 
+    const [userName, setUserName] = useState<string>('');
+    const [showNameDialog, setShowNameDialog] = useState(false);
+    const [nameInput, setNameInput] = useState('');
+    const [examDuration, setExamDuration] = useState(45 * 60);
+    const [startTime, setStartTime] = useState<number>(0);
+
     useEffect(() => {
         if (examId) {
             fetch(`/api/exams/${examId}`)
@@ -57,6 +63,9 @@ function ExamContent() {
                     setUnitTitle(data.title);
                     const modeParam = searchParams.get('mode');
                     setExamType(modeParam || data.type || '15-minute');
+
+                    const durationInSeconds = (data.duration || 45) * 60;
+                    setExamDuration(durationInSeconds);
 
                     const key = `exam_progress_v2_${examId}`;
                     try {
@@ -80,6 +89,8 @@ function ExamContent() {
                             }
                             if (p.answers) setAnswers(p.answers);
                             if (p.flaggedQuestions) setFlaggedQuestions(new Set(p.flaggedQuestions));
+                            if (p.startTime) setStartTime(p.startTime);
+                            else setStartTime(Date.now());
                             if (p.isSubmitted) {
                                 setIsSubmitted(true);
                                 setScore(p.score || 0);
@@ -87,18 +98,28 @@ function ExamContent() {
                             } else if (p.timeLeft && p.timeLeft > 0) {
                                 setTimeLeft(p.timeLeft);
                             } else {
-                                setTimeLeft((data.duration || 45) * 60);
+                                setTimeLeft(durationInSeconds);
                             }
                         } else {
                             finalQuestions.sort(() => Math.random() - 0.5);
-                            setTimeLeft((data.duration || 45) * 60);
+                            setTimeLeft(durationInSeconds);
+                            setStartTime(Date.now());
                         }
                         setQuestions(finalQuestions);
                     } catch (e) {
                         console.error("Error parsing saved progress", e);
                         setQuestions(data.questions.sort(() => Math.random() - 0.5));
-                        setTimeLeft((data.duration || 45) * 60);
+                        setTimeLeft(durationInSeconds);
+                        setStartTime(Date.now());
                     }
+
+                    const savedUser = localStorage.getItem('exam_user_name');
+                    if (savedUser) {
+                        setUserName(savedUser);
+                    } else {
+                        setShowNameDialog(true);
+                    }
+
                     setLoading(false);
                 })
                 .catch(err => {
@@ -155,11 +176,12 @@ function ExamContent() {
                 isSubmitted,
                 score,
                 timestamp: Date.now(),
-                questionIds: questions.map(q => q.id)
+                questionIds: questions.map(q => q.id),
+                startTime
             }));
         };
         saveState();
-    }, [answers, flaggedQuestions, timeLeft, isSubmitted, score, examId, loading, questions]);
+    }, [answers, flaggedQuestions, timeLeft, isSubmitted, score, examId, loading, questions, startTime]);
 
     useEffect(() => {
         if (questions.length > 0) {
@@ -213,9 +235,7 @@ function ExamContent() {
         setIsSubmitted(true);
         setOpenSubmitDialog(false);
 
-        const initialTime = examType === '15-minute' ? 15 * 60 :
-            examType === '45-minute' ? 45 * 60 : 45 * 60;
-        const timeSpentSeconds = initialTime - timeLeft;
+        const timeSpentSeconds = startTime > 0 ? Math.floor((Date.now() - startTime) / 1000) : (examDuration - timeLeft);
 
         try {
             await fetch('/api/exam-results', {
@@ -224,6 +244,7 @@ function ExamContent() {
                 body: JSON.stringify({
                     examId: examId,
                     examTitle: unitTitle,
+                    userName: userName || 'Nguoi dung',
                     score: scorePercent,
                     totalQuestions: questions.length,
                     correctAnswers: correctCount,
@@ -246,12 +267,61 @@ function ExamContent() {
 
     const progressPercent = questions.length > 0 ? (Object.keys(answers).length / questions.length) * 100 : 0;
 
+    const handleNameSubmit = () => {
+        if (nameInput.trim()) {
+            const trimmedName = nameInput.trim();
+            setUserName(trimmedName);
+            localStorage.setItem('exam_user_name', trimmedName);
+            setShowNameDialog(false);
+        }
+    };
+
+    if (showNameDialog && !loading && !isSubmitted) {
+        return (
+            <div className="min-h-screen bg-[#030712] flex items-center justify-center font-outfit text-white p-4">
+                <div className="w-full max-w-md">
+                    <div className="rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 to-blue-500/5 backdrop-blur-xl p-8 shadow-2xl">
+                        <div className="text-center mb-6">
+                            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                                <Award className="w-8 h-8 text-white" />
+                            </div>
+                            <h2 className="text-2xl font-bold mb-2">Chào mừng đến bài thi</h2>
+                            <p className="text-white/60">{unitTitle}</p>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <Label htmlFor="userName" className="text-white/80 mb-2 block">Nhập tên của bạn</Label>
+                                <input
+                                    id="userName"
+                                    type="text"
+                                    value={nameInput}
+                                    onChange={(e) => setNameInput(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleNameSubmit()}
+                                    placeholder="VD: Nguyen Van A"
+                                    className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                                    autoFocus
+                                />
+                            </div>
+                            <Button
+                                onClick={handleNameSubmit}
+                                disabled={!nameInput.trim()}
+                                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-xl font-semibold disabled:opacity-50"
+                            >
+                                Bắt đầu thi
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     if (loading) {
         return (
             <div className="min-h-screen bg-[#030712] flex items-center justify-center font-outfit text-white">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 rounded-full border-2 border-cyan-500/30 border-t-cyan-500 animate-spin" />
-                    <span className="text-white/60">Đang tải đề thi...</span>
+                    <span className="text-white/60">Dang tai de thi...</span>
                 </div>
             </div>
         );

@@ -173,7 +173,7 @@ export function AreaChart() {
             <div className="p-4">
                 <ChartContainer
                     config={chartConfig}
-                    className="aspect-auto h-[250px] w-full"
+                    className="aspect-auto h-[250px] w-full min-w-0"
                 >
                     <RechartsAreaChart data={filteredData}>
                         <defs>
