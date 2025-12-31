@@ -189,16 +189,52 @@ function ExamContent() {
         setFlaggedQuestions(newFlags);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let correctCount = 0;
+        let wrongCount = 0;
+        const answersDetail: { questionId: string; userAnswer: string; correctAnswer: string; isCorrect: boolean }[] = [];
+
         questions.forEach(q => {
-            if (answers[q.id] === q.answer) {
-                correctCount++;
-            }
+            const userAnswer = answers[q.id] || '';
+            const isCorrect = userAnswer === q.answer;
+            if (isCorrect) correctCount++;
+            else wrongCount++;
+
+            answersDetail.push({
+                questionId: q.id,
+                userAnswer,
+                correctAnswer: q.answer as string,
+                isCorrect
+            });
         });
+
+        const scorePercent = questions.length > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
         setScore(correctCount);
         setIsSubmitted(true);
         setOpenSubmitDialog(false);
+
+        const initialTime = examType === '15-minute' ? 15 * 60 :
+            examType === '45-minute' ? 45 * 60 : 45 * 60;
+        const timeSpentSeconds = initialTime - timeLeft;
+
+        try {
+            await fetch('/api/exam-results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    examId: examId,
+                    examTitle: unitTitle,
+                    score: scorePercent,
+                    totalQuestions: questions.length,
+                    correctAnswers: correctCount,
+                    wrongAnswers: wrongCount,
+                    timeSpent: timeSpentSeconds,
+                    answers: answersDetail
+                })
+            });
+        } catch (error) {
+            console.error('Failed to save exam result:', error);
+        }
     };
 
     const handleRetry = () => {

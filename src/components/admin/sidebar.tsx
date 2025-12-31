@@ -32,10 +32,11 @@ interface SidebarProps {
 }
 
 const mainNavItems = [
-    { id: "dashboard", label: "Tổng quan", icon: LayoutDashboard },
-    { id: "subjects", label: "Môn học", icon: BookOpen },
-    { id: "content", label: "Nội dung", icon: FileText },
-    { id: "exams", label: "Đề thi", icon: PenTool },
+    { id: "dashboard", label: "Tong quan", icon: LayoutDashboard },
+    { id: "subjects", label: "Mon hoc", icon: BookOpen },
+    { id: "content", label: "Noi dung", icon: FileText },
+    { id: "exams", label: "De thi", icon: PenTool },
+    { id: "history", label: "Lich su thi", icon: BarChart3 },
 ]
 
 const documentNavItems = [

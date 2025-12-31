@@ -84,3 +84,25 @@ export interface Exam {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface ExamResult {
+    _id?: string;
+    id: string;
+    examId: string;
+    examTitle: string;
+    userId?: string;
+    userName?: string;
+    score: number;
+    totalQuestions: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    timeSpent: number; // seconds
+    answers: {
+        questionId: string;
+        userAnswer: string;
+        correctAnswer: string;
+        isCorrect: boolean;
+    }[];
+    submittedAt: Date;
+    createdAt?: Date;
+}

@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Subject, Unit, Exam } from '@/lib/types';
+import { Subject, Unit, Exam, ExamResult } from '@/lib/types';
 import {
     BookOpen, Plus, Edit2, FileText, Users, TrendingUp, Search, Menu, X, Trash2,
-    ChevronLeft, ChevronRight, PenTool, GraduationCap
+    ChevronLeft, ChevronRight, PenTool, GraduationCap, Clock, CheckCircle, XCircle, History
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +26,7 @@ export default function AdminDashboard() {
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [units, setUnits] = useState<Record<string, Unit[]>>({});
     const [exams, setExams] = useState<Exam[]>([]);
+    const [examResults, setExamResults] = useState<ExamResult[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeSection, setActiveSection] = useState('dashboard');
     const [searchTerm, setSearchTerm] = useState('');
@@ -104,6 +105,9 @@ export default function AdminDashboard() {
                 }
                 setUnits(unitsMap);
                 fetch('/api/exams').then(r => r.json()).then(setExams);
+                fetch('/api/exam-results?limit=100').then(r => r.json()).then(data => {
+                    if (Array.isArray(data)) setExamResults(data);
+                });
                 setLoading(false);
             })
             .catch(() => setLoading(false));
@@ -589,6 +593,88 @@ export default function AdminDashboard() {
                                             );
                                         })}
                                     </div>
+                                </div>
+                            )}
+
+                            {activeSection === 'history' && (
+                                <div className="space-y-6">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h1 className="text-2xl font-bold">Lich su lam bai</h1>
+                                            <p className="text-muted-foreground">Xem ket qua thi cua nguoi dung.</p>
+                                        </div>
+                                        <Badge variant="outline">{examResults.length} ket qua</Badge>
+                                    </div>
+
+                                    {examResults.length > 0 ? (
+                                        <div className="rounded-xl border bg-card overflow-hidden">
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead>Nguoi dung</TableHead>
+                                                        <TableHead>De thi</TableHead>
+                                                        <TableHead className="text-center">Diem</TableHead>
+                                                        <TableHead className="text-center">Dung</TableHead>
+                                                        <TableHead className="text-center">Sai</TableHead>
+                                                        <TableHead className="text-center">Thoi gian</TableHead>
+                                                        <TableHead>Ngay nop</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {examResults.map((result) => (
+                                                        <TableRow key={result.id}>
+                                                            <TableCell className="font-medium">
+                                                                {result.userName || 'Nguoi dung'}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <span className="line-clamp-1">{result.examTitle}</span>
+                                                            </TableCell>
+                                                            <TableCell className="text-center">
+                                                                <Badge
+                                                                    className={cn(
+                                                                        result.score >= 80 ? "bg-green-500/10 text-green-600" :
+                                                                            result.score >= 50 ? "bg-yellow-500/10 text-yellow-600" :
+                                                                                "bg-red-500/10 text-red-600"
+                                                                    )}
+                                                                >
+                                                                    {result.score}%
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell className="text-center">
+                                                                <span className="flex items-center justify-center gap-1 text-green-600">
+                                                                    <CheckCircle className="h-3 w-3" />
+                                                                    {result.correctAnswers}
+                                                                </span>
+                                                            </TableCell>
+                                                            <TableCell className="text-center">
+                                                                <span className="flex items-center justify-center gap-1 text-red-500">
+                                                                    <XCircle className="h-3 w-3" />
+                                                                    {result.wrongAnswers}
+                                                                </span>
+                                                            </TableCell>
+                                                            <TableCell className="text-center">
+                                                                <span className="flex items-center justify-center gap-1 text-muted-foreground">
+                                                                    <Clock className="h-3 w-3" />
+                                                                    {Math.floor((result.timeSpent || 0) / 60)}p
+                                                                </span>
+                                                            </TableCell>
+                                                            <TableCell className="text-muted-foreground text-sm">
+                                                                {result.submittedAt ? new Date(result.submittedAt).toLocaleDateString('vi-VN') : '-'}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    ) : (
+                                        <div className="rounded-xl border bg-card p-12 text-center">
+                                            <History className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
+                                            <p className="text-lg font-medium mb-1">Chua co lich su thi</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                Khi nguoi dung hoan thanh bai thi, ket qua se hien thi o day.
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </>
