@@ -332,7 +332,7 @@ function ExamContent() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-xl">
+                    <div className="flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-xl">
                         <div className="relative">
                             <Timer className="w-4 h-4 text-cyan-400" />
                             {timeLeft < 300 && <div className="absolute inset-0 animate-ping bg-red-500/50 rounded-full" />}
