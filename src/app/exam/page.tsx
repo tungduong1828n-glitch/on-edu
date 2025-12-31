@@ -598,7 +598,12 @@ function ExamContent() {
                 </aside>
 
                 {showMobileGrid && (
-                    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md lg:hidden flex justify-end animate-in fade-in duration-200">
+                    <div
+                        className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md lg:hidden flex justify-end animate-in fade-in duration-200"
+                        onClick={(e) => {
+                            if (e.target === e.currentTarget) setShowMobileGrid(false);
+                        }}
+                    >
                         <div className="w-[85%] max-w-[320px] h-full bg-[#030712] border-l border-white/10 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
                             <div className="p-5 border-b border-white/5 flex items-center justify-between">
                                 <div>
