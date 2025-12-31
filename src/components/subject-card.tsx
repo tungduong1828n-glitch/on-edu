@@ -19,14 +19,14 @@ export function SubjectCard({ subject }: { subject: Subject }) {
 
     return (
         <Link href={`/subject/${subject.id}`} className="block h-full">
-            <div className="group relative h-full rounded-3xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-md transition-all duration-500 hover:border-cyan-500/30 hover:bg-white/[0.05] hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.15)]">
+            <div className="group relative h-full rounded-3xl border border-white/5 bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/[0.05] hover:shadow-lg hover:shadow-cyan-500/10 gpu-accelerate will-change-transform">
 
-                {/* Hover Gradient Overlay */}
-                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${subject.gradient} opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-[0.05]`} />
+                {/* Hover Gradient Overlay - removed blur for mobile performance */}
+                <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${subject.gradient} opacity-0 transition-opacity duration-300 group-hover:opacity-[0.08]`} />
 
                 <div className="relative flex flex-col h-full z-10">
                     <div className="mb-6 flex items-start justify-between">
-                        <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${subject.gradient} shadow-lg shadow-black/20 ring-1 ring-white/10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}>
+                        <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${subject.gradient} shadow-lg shadow-black/20 ring-1 ring-white/10 transition-transform duration-300 group-hover:scale-105`}>
                             <IconComponent className="h-7 w-7 text-white" />
                         </div>
                         <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/5 bg-white/5 text-white/40 transition-colors duration-300 group-hover:bg-cyan-500/10 group-hover:text-cyan-400">
@@ -34,7 +34,7 @@ export function SubjectCard({ subject }: { subject: Subject }) {
                         </div>
                     </div>
 
-                    <h3 className="mb-2 text-xl font-bold tracking-tight text-white transition-colors group-hover:text-cyan-400 font-outfit">
+                    <h3 className="mb-2 text-xl font-bold tracking-tight text-white transition-colors duration-200 group-hover:text-cyan-400 font-outfit">
                         {subject.name}
                     </h3>
 

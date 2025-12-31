@@ -115,6 +115,58 @@
   }
 }
 
+/* GPU Acceleration & Mobile Performance */
+@layer utilities {
+  .gpu-accelerate {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .will-change-opacity {
+    will-change: opacity;
+  }
+}
+
+/* Reduced Motion for users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Mobile-optimized animations */
+@media (max-width: 768px) {
+
+  .animate-fade-in-up,
+  .animate-fade-in-scale,
+  .animate-slide-in-left,
+  .animate-slide-in-right {
+    animation-duration: 0.3s !important;
+  }
+
+  /* Disable expensive blur effects on mobile */
+  .mobile-no-blur {
+    backdrop-filter: none !important;
+    filter: none !important;
+  }
+
+  /* Simpler shadow on mobile */
+  .mobile-simple-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
 /* Custom background mesh/gradient for that "beautiful" look */
 .bg-gradient-mesh {
   background-color: hsla(var(--background));
