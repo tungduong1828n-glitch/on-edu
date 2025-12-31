@@ -31,7 +31,7 @@ export default function DashboardPage() {
     const otherSubjects = filteredSubjects.filter(s => !naturalSciences.includes(s) && !socialSciences.includes(s));
 
     const currentHour = new Date().getHours();
-    const greeting = currentHour < 12 ? 'Chao buoi sang' : currentHour < 18 ? 'Chao buoi chieu' : 'Chao buoi toi';
+    const greeting = currentHour < 12 ? 'Chào buổi sáng' : currentHour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
 
     return (
         <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10">
@@ -44,21 +44,21 @@ export default function DashboardPage() {
                             <span>{greeting}!</span>
                         </div>
                         <h1 className="text-2xl md:text-3xl font-bold text-white font-outfit">
-                            Kho Hoc Lieu
+                            Kho Học Liệu
                         </h1>
                         <p className="text-white/60 max-w-md">
-                            Chon mon hoc de bat dau on luyen. Hay luyen tap moi ngay de dat ket qua tot nhat!
+                            Chọn môn học để bắt đầu ôn luyện. Hãy luyện tập mỗi ngày để đạt kết quả tốt nhất!
                         </p>
                     </div>
 
                     <div className="flex flex-wrap gap-3">
                         <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
                             <Target className="h-4 w-4 text-cyan-400" />
-                            <span className="text-sm text-white/80">{subjects.length} Mon hoc</span>
+                            <span className="text-sm text-white/80">{subjects.length} Môn học</span>
                         </div>
                         <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10">
                             <TrendingUp className="h-4 w-4 text-green-400" />
-                            <span className="text-sm text-white/80">On luyen</span>
+                            <span className="text-sm text-white/80">Ôn luyện</span>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@ export default function DashboardPage() {
                 <div className="relative w-full sm:w-72">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Tim kiem mon hoc..."
+                        placeholder="Tìm kiếm môn học..."
                         className="pl-9 bg-white/5 border-white/10 focus-visible:ring-cyan-500"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -92,7 +92,7 @@ export default function DashboardPage() {
                                 <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
                                     <Atom className="h-5 w-5 text-blue-400" />
                                 </div>
-                                <h3 className="text-xl font-bold font-outfit text-foreground">Khoa hoc Tu nhien</h3>
+                                <h3 className="text-xl font-bold font-outfit text-foreground">Khoa học Tự nhiên</h3>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {naturalSciences.map((subject, idx) => (
@@ -110,7 +110,7 @@ export default function DashboardPage() {
                                 <div className="h-10 w-10 rounded-xl bg-pink-500/10 flex items-center justify-center border border-pink-500/20">
                                     <Landmark className="h-5 w-5 text-pink-400" />
                                 </div>
-                                <h3 className="text-xl font-bold font-outfit text-foreground">Khoa hoc Xa hoi</h3>
+                                <h3 className="text-xl font-bold font-outfit text-foreground">Khoa học Xã hội</h3>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {socialSciences.map((subject, idx) => (
@@ -128,7 +128,7 @@ export default function DashboardPage() {
                                 <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20">
                                     <BookOpen className="h-5 w-5 text-purple-400" />
                                 </div>
-                                <h3 className="text-xl font-bold font-outfit text-foreground">Mon hoc khac</h3>
+                                <h3 className="text-xl font-bold font-outfit text-foreground">Môn học khác</h3>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {otherSubjects.map((subject, idx) => (
@@ -145,7 +145,7 @@ export default function DashboardPage() {
                             <div className="h-16 w-16 mx-auto rounded-2xl bg-white/5 flex items-center justify-center">
                                 <Search className="h-8 w-8 text-white/30" />
                             </div>
-                            <p className="text-muted-foreground">Khong tim thay mon hoc nao phu hop.</p>
+                            <p className="text-muted-foreground">Không tìm thấy môn học nào phù hợp.</p>
                         </div>
                     )}
                 </div>
