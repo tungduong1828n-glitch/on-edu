@@ -713,12 +713,16 @@ function ExamContent() {
                         <div className="w-[85%] max-w-[320px] h-full bg-[#030712] border-l border-white/10 flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
                             <div className="p-5 border-b border-white/5 flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-base font-bold text-white font-outfit">Danh sach cau hoi</h3>
-                                    <p className="text-xs text-white/40 mt-1">Da lam: {Object.keys(answers).length}/{questions.length}</p>
+                                    <h3 className="text-base font-bold text-white font-outfit">Danh sách câu hỏi</h3>
+                                    <p className="text-xs text-white/40 mt-1">Đã làm: {Object.keys(answers).length}/{questions.length}</p>
                                 </div>
-                                <Button variant="ghost" size="icon" onClick={() => setShowMobileGrid(false)} className="hover:bg-white/10 rounded-full h-10 w-10">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowMobileGrid(false)}
+                                    className="hover:bg-white/10 rounded-full h-10 w-10 flex items-center justify-center text-white"
+                                >
                                     <X className="w-5 h-5" />
-                                </Button>
+                                </button>
                             </div>
 
                             <div className="flex-1 overflow-y-auto p-5 custom-scrollbar">
@@ -763,6 +767,16 @@ function ExamContent() {
                                         );
                                     })}
                                 </div>
+                            </div>
+
+                            <div className="p-4 border-t border-white/10">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowMobileGrid(false)}
+                                    className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold transition-colors"
+                                >
+                                    Đóng
+                                </button>
                             </div>
                         </div>
                     </div>
