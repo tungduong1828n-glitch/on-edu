@@ -49,7 +49,7 @@ export default function EditExamPage({ params }: { params: Promise<{ id: string 
 
     const deleteSelectedQuestions = () => {
         if (!exam || !exam.questions) return;
-        if (!confirm(`Xoa ${selectedQuestions.size} cau hoi da chon?`)) return;
+        if (!confirm(`Xóa ${selectedQuestions.size} câu hỏi đã chọn?`)) return;
 
         const newQuestions = exam.questions.filter((_, idx) => !selectedQuestions.has(idx));
         setExam({ ...exam, questions: newQuestions });
@@ -180,7 +180,7 @@ export default function EditExamPage({ params }: { params: Promise<{ id: string 
 
     if (loading) return (
         <div className="min-h-screen bg-background flex items-center justify-center">
-            <div className="animate-pulse text-muted-foreground">Dang tai...</div>
+            <div className="animate-pulse text-muted-foreground">Đang tải...</div>
         </div>
     );
 
@@ -188,9 +188,9 @@ export default function EditExamPage({ params }: { params: Promise<{ id: string 
         <div className="min-h-screen bg-background flex items-center justify-center">
             <div className="text-center">
                 <AlertCircle className="h-12 w-12 mx-auto mb-4 text-destructive" />
-                <p className="text-lg font-medium">Khong tim thay de thi</p>
+                <p className="text-lg font-medium">Không tìm thấy đề thi</p>
                 <Button variant="outline" className="mt-4" onClick={() => router.back()}>
-                    Quay lai
+                    Quay lại
                 </Button>
             </div>
         </div>
@@ -212,18 +212,18 @@ export default function EditExamPage({ params }: { params: Promise<{ id: string 
                             <div>
                                 <h1 className="text-xl font-semibold">{exam.title}</h1>
                                 <p className="text-sm text-muted-foreground">
-                                    {questionCount} cau hoi - {exam.duration} phut
+                                    {questionCount} câu hỏi - {exam.duration} phút
                                 </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
                             <Link href={`/exam?examId=${exam.id}`} target="_blank">
                                 <Button variant="outline" size="sm">
-                                    <Eye className="w-4 h-4 mr-2" /> Xem thu
+                                    <Eye className="w-4 h-4 mr-2" /> Xem thử
                                 </Button>
                             </Link>
                             <Button onClick={handleUpdateExam} disabled={saving} size="sm">
-                                {saving ? 'Dang luu...' : <><Save className="w-4 h-4 mr-2" /> Luu</>}
+                                {saving ? 'Đang lưu...' : <><Save className="w-4 h-4 mr-2" /> Lưu</>}
                             </Button>
                         </div>
                     </div>
@@ -321,7 +321,7 @@ export default function EditExamPage({ params }: { params: Promise<{ id: string 
                                         <div className="relative flex-1 md:flex-none">
                                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                             <Input
-                                                placeholder="Tim kiem cau hoi..."
+                                                placeholder="Tìm kiếm câu hỏi..."
                                                 value={searchQuery}
                                                 onChange={(e) => setSearchQuery(e.target.value)}
                                                 className="pl-8 w-full md:w-[200px] h-9"
@@ -390,7 +390,7 @@ export default function EditExamPage({ params }: { params: Promise<{ id: string 
                                                                 <Input
                                                                     value={q.text}
                                                                     onChange={(e) => updateQuestion(idx, 'text', e.target.value)}
-                                                                    placeholder="Noi dung cau hoi..."
+                                                                    placeholder="Nội dung câu hỏi..."
                                                                     className="text-sm"
                                                                 />
 
@@ -534,21 +534,21 @@ export default function EditExamPage({ params }: { params: Promise<{ id: string 
                                             {searchQuery ? (
                                                 <>
                                                     <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                                                    <p className="text-muted-foreground">Khong tim thay cau hoi phu hop</p>
+                                                    <p className="text-muted-foreground">Không tìm thấy câu hỏi phù hợp</p>
                                                     <Button
                                                         variant="link"
                                                         onClick={() => setSearchQuery('')}
                                                         className="mt-2"
                                                     >
-                                                        Xoa tim kiem
+                                                        Xóa tìm kiếm
                                                     </Button>
                                                 </>
                                             ) : (
                                                 <>
                                                     <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                                                    <p className="text-lg font-medium mb-1">Chua co cau hoi nao</p>
+                                                    <p className="text-lg font-medium mb-1">Chưa có câu hỏi nào</p>
                                                     <p className="text-sm text-muted-foreground mb-4">
-                                                        Hay them cau hoi bang cach import JSON hoac tao thu cong
+                                                        Hãy thêm câu hỏi bằng cách import JSON hoặc tạo thủ công
                                                     </p>
                                                     <QuestionImporter onImport={handleImportQuestions} />
                                                 </>

@@ -321,7 +321,7 @@ function ExamContent() {
             <div className="min-h-screen bg-[#030712] flex items-center justify-center font-outfit text-white">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 rounded-full border-2 border-cyan-500/30 border-t-cyan-500 animate-spin" />
-                    <span className="text-white/60">Dang tai de thi...</span>
+                    <span className="text-white/60">Đang tải đề thi...</span>
                 </div>
             </div>
         );
@@ -791,23 +791,23 @@ function ExamContent() {
                             <div className="p-2 rounded-xl bg-cyan-500/10">
                                 <Sparkles className="w-5 h-5 text-cyan-400" />
                             </div>
-                            Xac nhan nop bai?
+                            Xác nhận nộp bài?
                         </DialogTitle>
                         <DialogDescription className="text-white/60 mt-4">
-                            Ban da hoan thanh <span className="text-cyan-400 font-bold">{Object.keys(answers).length}/{questions.length}</span> cau hoi.
+                            Bạn đã hoàn thành <span className="text-cyan-400 font-bold">{Object.keys(answers).length}/{questions.length}</span> câu hỏi.
                             <br />
                             {Object.keys(answers).length < questions.length && (
-                                <span className="text-yellow-400">Con {questions.length - Object.keys(answers).length} cau chua lam!</span>
+                                <span className="text-yellow-400">Còn {questions.length - Object.keys(answers).length} câu chưa làm!</span>
                             )}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className="relative mt-4">
-                        <Button variant="ghost" onClick={() => setOpenSubmitDialog(false)} className="hover:bg-white/5 text-white rounded-full">Huy</Button>
+                        <Button variant="ghost" onClick={() => setOpenSubmitDialog(false)} className="hover:bg-white/5 text-white rounded-full">Hủy</Button>
                         <Button
                             onClick={handleSubmit}
                             className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white border-0 rounded-full px-6"
                         >
-                            Nop bai
+                            Nộp bài
                         </Button>
                     </DialogFooter>
                 </DialogContent>
@@ -822,7 +822,7 @@ export default function ExamPage() {
             <div className="min-h-screen bg-[#030712] flex items-center justify-center font-outfit text-white">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 rounded-full border-2 border-cyan-500/30 border-t-cyan-500 animate-spin" />
-                    <span className="text-white/60">Dang tai...</span>
+                    <span className="text-white/60">Đang tải...</span>
                 </div>
             </div>
         }>
