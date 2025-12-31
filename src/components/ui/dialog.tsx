@@ -1,9 +1,12 @@
 "use client"
 
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+
+const DialogContext = React.createContext<{ open: boolean, onOpenChange: (open: boolean) => void }>({ open: false, onOpenChange: () => { } })
 
 const Dialog = ({ children, open, onOpenChange }: { children: React.ReactNode, open?: boolean, onOpenChange?: (open: boolean) => void }) => {
     const [isOpen, setIsOpen] = React.useState(open || false)
@@ -19,18 +22,10 @@ const Dialog = ({ children, open, onOpenChange }: { children: React.ReactNode, o
 
     return (
         <DialogContext.Provider value={{ open: isOpen, onOpenChange: handleOpenChange }}>
-            {isOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center">
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" onClick={() => handleOpenChange(false)} />
-                    {children}
-                </div>
-            )}
-            {!isOpen && children}
+            {children}
         </DialogContext.Provider>
     )
 }
-
-const DialogContext = React.createContext<{ open: boolean, onOpenChange: (open: boolean) => void }>({ open: false, onOpenChange: () => { } })
 
 const DialogTrigger = React.forwardRef<
     HTMLButtonElement,
@@ -70,27 +65,39 @@ const DialogContent = React.forwardRef<
     React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
     const { open, onOpenChange } = React.useContext(DialogContext)
+    const [mounted, setMounted] = React.useState(false)
 
-    if (!open) return null
+    React.useEffect(() => {
+        setMounted(true)
+    }, [])
 
-    return (
-        <div
-            ref={ref}
-            className={cn(
-                "relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg md:w-full",
-                className
-            )}
-            {...props}
-        >
-            {children}
-            <button
-                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+    if (!open || !mounted) return null
+
+    return createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+                className="fixed inset-0 bg-black/80 backdrop-blur-sm"
                 onClick={() => onOpenChange(false)}
+            />
+            <div
+                ref={ref}
+                className={cn(
+                    "relative z-50 grid w-full max-w-lg gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg md:w-full animate-in fade-in-0 zoom-in-95",
+                    className
+                )}
+                {...props}
             >
-                <X className="h-4 w-4" />
-                <span className="sr-only">Close</span>
-            </button>
-        </div>
+                {children}
+                <button
+                    className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
+                    onClick={() => onOpenChange(false)}
+                >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Close</span>
+                </button>
+            </div>
+        </div>,
+        document.body
     )
 })
 DialogContent.displayName = "DialogContent"
