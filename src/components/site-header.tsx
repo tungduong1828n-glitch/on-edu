@@ -1,71 +1,93 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { ModeToggle } from "@/components/mode-toggle";
 import { GraduationCap, Menu, X, LayoutDashboard, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
 
 export function SiteHeader() {
+    const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    if (pathname?.startsWith('/admin') || pathname?.startsWith('/exam') || pathname?.startsWith('/login')) {
+        return null;
+    }
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#09090b]/95 backdrop-blur-xl supports-[backdrop-filter]:bg-[#09090b]/80">
-            {/* Gradient Line */}
-            <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50" />
+        <header className={`sticky top-0 z-50 w-full transition-all duration-500 ${scrolled
+            ? 'bg-[#0a0a12]/80 backdrop-blur-2xl border-b border-white/10 shadow-lg shadow-black/20'
+            : 'bg-transparent'
+            }`}>
+            <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
 
-            <div className="w-full flex h-16 items-center justify-between px-6 md:px-8 relative">
-                {/* Logo */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-0 left-1/4 w-96 h-20 bg-cyan-500/5 blur-3xl rounded-full" />
+                <div className="absolute top-0 right-1/4 w-96 h-20 bg-blue-500/5 blur-3xl rounded-full" />
+            </div>
+
+            <div className="w-full flex h-18 items-center justify-between px-6 md:px-8 py-4 relative">
                 <Link href="/" className="flex items-center gap-3 group">
-                    <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-600 text-white font-bold shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all duration-300 group-hover:scale-105">
-                        <GraduationCap className="h-5 w-5" />
-                        <div className="absolute inset-0 rounded-xl ring-1 ring-inset ring-white/20" />
+                    <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-bold shadow-lg shadow-cyan-500/30 group-hover:shadow-cyan-500/50 transition-all duration-300 group-hover:scale-105 animate-pulse-glow">
+                        <GraduationCap className="h-6 w-6" />
+                        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/30" />
                     </div>
-                    <span className="font-outfit font-bold text-xl tracking-wide text-white group-hover:text-cyan-400 transition-colors">
-                        NckxEdu
-                    </span>
+                    <div className="flex flex-col">
+                        <span className="font-outfit font-bold text-xl tracking-wide bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent group-hover:from-cyan-400 group-hover:to-blue-400 transition-all">
+                            NckxEdu
+                        </span>
+                        <span className="text-[10px] text-cyan-400/60 font-medium tracking-wider uppercase hidden sm:block">
+                            Ôn thi THPT
+                        </span>
+                    </div>
                 </Link>
 
-                {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-2">
-                    {[
-                        { href: '/dashboard', label: 'Vào học', icon: LayoutDashboard },
-                        { href: '/exams', label: 'Đề thi', icon: FileText },
-                    ].map((link) => (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white/70 transition-all hover:text-white hover:bg-white/5 active:scale-95"
-                        >
-                            <link.icon className="w-4 h-4" />
-                            {link.label}
-                        </Link>
-                    ))}
+                    <Link
+                        href="/dashboard"
+                        className="group flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 text-white/80 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/10"
+                    >
+                        <LayoutDashboard className="w-4 h-4 text-cyan-400 group-hover:text-cyan-300" />
+                        Vào học
+                    </Link>
+                    <Link
+                        href="/exams"
+                        className="group flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 text-white/80 hover:text-white bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/10"
+                    >
+                        <FileText className="w-4 h-4 text-purple-400 group-hover:text-purple-300" />
+                        Đề thi
+                    </Link>
 
-                    <div className="mx-2 w-px h-6 bg-white/10" />
+                    <div className="mx-2 w-px h-8 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
 
                     <ModeToggle />
                 </nav>
 
-                {/* Mobile Menu Toggle */}
-                <div className="flex items-center gap-4 md:hidden">
+                <div className="flex items-center gap-3 md:hidden">
                     <ModeToggle />
                     <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => setIsMobileMenuOpen(true)}
-                        className="text-white/70 hover:text-white hover:bg-white/10 rounded-full"
+                        className="text-white/80 hover:text-white hover:bg-white/10 rounded-full w-11 h-11 border border-white/10"
                     >
-                        <Menu className="h-6 w-6" />
+                        <Menu className="h-5 w-5" />
                     </Button>
                 </div>
             </div>
 
-            {/* Mobile Navigation Overlay */}
             {isMobileMenuOpen && (
                 <div className="fixed inset-0 z-[9999] bg-[#020817] flex flex-col h-screen w-screen overflow-hidden">
-                    {/* Ambient Background in Menu */}
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
                         <div className="absolute top-[-20%] right-[-20%] w-[80%] h-[80%] rounded-full bg-cyan-900/10 blur-[100px]" />
                         <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-900/10 blur-[80px]" />
@@ -74,8 +96,8 @@ export function SiteHeader() {
                     <div className="container h-full py-6 px-6 space-y-8 relative z-10 flex flex-col">
                         <div className="flex items-center justify-between">
                             <Link href="/" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
-                                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-600 to-blue-600 text-white font-bold shadow-lg shadow-cyan-900/20">
-                                    <GraduationCap className="h-5 w-5" />
+                                <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 text-white font-bold shadow-lg shadow-cyan-500/30">
+                                    <GraduationCap className="h-6 w-6" />
                                 </div>
                                 <span className="font-outfit font-bold text-2xl tracking-wide text-white">
                                     NckxEdu
@@ -85,9 +107,9 @@ export function SiteHeader() {
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="rounded-full hover:bg-white/10 text-white/80"
+                                className="rounded-full hover:bg-white/10 text-white/80 w-11 h-11 border border-white/10"
                             >
-                                <X className="h-7 w-7" />
+                                <X className="h-6 w-6" />
                             </Button>
                         </div>
 
@@ -116,13 +138,13 @@ export function SiteHeader() {
                                 </div>
                                 <div>
                                     <div className="text-lg font-bold text-white group-hover:text-purple-50">Đề thi</div>
-                                    <div className="text-sm text-white/40">Luyện tập và thi thử</div>
+                                    <div className="text-sm text-white/40">Luyen tap va thi thu</div>
                                 </div>
                             </Link>
                         </div>
 
                         <div className="mt-auto pb-8 text-center text-white/30 text-sm">
-                            © 2024 NckxEdu Platform
+                            2024 NckxEdu Platform
                         </div>
                     </div>
                 </div>
